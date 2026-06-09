@@ -7,16 +7,16 @@ import {
   CheckCircle2,
   XCircle,
   RotateCcw,
-  User,
   Plane,
-  Hotel,
-  Globe,
   Clock,
   MessageSquare,
   Lock,
 } from "lucide-react";
 import { useApp } from "@/contexts/AppContext";
 import { StatusBadge } from "@/components/shared/StatusBadge";
+import { TravelerInfoCard } from "@/components/shared/TravelerInfoCard";
+import { CountryStayTable } from "@/components/shared/CountryStayTable";
+import { AccommodationsTable } from "@/components/shared/AccommodationsTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -30,14 +30,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import type { TravelRequest } from "@/types";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -144,35 +136,7 @@ export function ApproverView({ request }: { request: TravelRequest }) {
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         <div className="space-y-6 xl:col-span-2">
-          {/* Traveler Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <User className="h-5 w-5 text-[#002855]" />
-                Traveler Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                {[
-                  { label: "Employee Name", value: request.traveler.name },
-                  { label: "Employee ID", value: request.traveler.employeeId },
-                  { label: "Department", value: request.traveler.department },
-                  { label: "Division", value: request.traveler.division },
-                  { label: "Duty Station", value: request.traveler.dutyStation },
-                  { label: "Email", value: request.traveler.email },
-                ].map((field) => (
-                  <div key={field.label}>
-                    <Label className="text-xs text-gray-500">{field.label}</Label>
-                    <p className="mt-0.5 flex items-center gap-1 text-sm font-medium text-gray-700">
-                      <Lock className="h-3 w-3 text-gray-300" />
-                      {field.value}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <TravelerInfoCard traveler={request.traveler} locked />
 
           {/* Itinerary */}
           <Card>
@@ -224,77 +188,9 @@ export function ApproverView({ request }: { request: TravelRequest }) {
             </CardContent>
           </Card>
 
-          {/* Accommodations */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Hotel className="h-5 w-5 text-[#002855]" />
-                Accommodations
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-slate-50">
-                    <TableHead>Hotel</TableHead>
-                    <TableHead>Check-in</TableHead>
-                    <TableHead>Check-out</TableHead>
-                    <TableHead>Rate</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {request.accommodations.map((acc) => (
-                    <TableRow key={acc.id}>
-                      <TableCell className="font-medium">{acc.hotelName}</TableCell>
-                      <TableCell>{acc.checkInDate ? format(new Date(acc.checkInDate), "MMM d") : "—"}</TableCell>
-                      <TableCell>{acc.checkOutDate ? format(new Date(acc.checkOutDate), "MMM d") : "—"}</TableCell>
-                      <TableCell>${acc.nightlyRate} {acc.currency}/night</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          <AccommodationsTable accommodations={request.accommodations} />
 
-          {/* Country Stays */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Globe className="h-5 w-5 text-[#002855]" />
-                Country Stay Summary
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-slate-50">
-                    <TableHead>Country</TableHead>
-                    <TableHead>Entry</TableHead>
-                    <TableHead>Exit</TableHead>
-                    <TableHead>Nights</TableHead>
-                    <TableHead>UN Clearance</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {request.countryStays.map((cs, idx) => (
-                    <TableRow key={idx}>
-                      <TableCell className="font-medium">{cs.country}</TableCell>
-                      <TableCell>{format(new Date(cs.entryDate), "MMM d")}</TableCell>
-                      <TableCell>{format(new Date(cs.exitDate), "MMM d")}</TableCell>
-                      <TableCell>{cs.totalNights}</TableCell>
-                      <TableCell>
-                        {cs.requiresUNClearance ? (
-                          <Badge className="bg-amber-100 text-amber-800 border-amber-300">Required</Badge>
-                        ) : (
-                          <Badge variant="secondary">No</Badge>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          <CountryStayTable countryStays={request.countryStays} dateFormat="MMM d" />
 
           {/* Notes */}
           {request.internalNotes && (

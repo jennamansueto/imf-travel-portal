@@ -8,12 +8,11 @@ import {
   CheckCircle2,
   Send,
   Clock,
-  User,
   Plane,
   Hotel,
-  Globe,
   AlertTriangle,
   AlertCircle,
+  Globe,
   MessageSquare,
   Plus,
   Trash2,
@@ -23,6 +22,8 @@ import {
 } from "lucide-react";
 import { useApp } from "@/contexts/AppContext";
 import { StatusBadge } from "@/components/shared/StatusBadge";
+import { TravelerInfoCard } from "@/components/shared/TravelerInfoCard";
+import { CountryStayTable } from "@/components/shared/CountryStayTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -249,43 +250,7 @@ export function TripDetail({ request }: { request: TravelRequest }) {
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         <div className="space-y-6 xl:col-span-2">
-          {/* Traveler Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <User className="h-5 w-5 text-[#002855]" />
-                Traveler Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                <div>
-                  <Label className="text-xs text-gray-500">Employee Name</Label>
-                  <p className="mt-0.5 text-sm font-medium">{request.traveler.name}</p>
-                </div>
-                <div>
-                  <Label className="text-xs text-gray-500">Employee ID</Label>
-                  <p className="mt-0.5 text-sm font-medium">{request.traveler.employeeId}</p>
-                </div>
-                <div>
-                  <Label className="text-xs text-gray-500">Department</Label>
-                  <p className="mt-0.5 text-sm font-medium">{request.traveler.department}</p>
-                </div>
-                <div>
-                  <Label className="text-xs text-gray-500">Division</Label>
-                  <p className="mt-0.5 text-sm font-medium">{request.traveler.division}</p>
-                </div>
-                <div>
-                  <Label className="text-xs text-gray-500">Duty Station</Label>
-                  <p className="mt-0.5 text-sm font-medium">{request.traveler.dutyStation}</p>
-                </div>
-                <div>
-                  <Label className="text-xs text-gray-500">Email</Label>
-                  <p className="mt-0.5 text-sm font-medium">{request.traveler.email}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <TravelerInfoCard traveler={request.traveler} />
 
           {/* Itinerary Section */}
           <Card>
@@ -475,57 +440,7 @@ export function TripDetail({ request }: { request: TravelRequest }) {
             </CardContent>
           </Card>
 
-          {/* Country Stay Summary */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Globe className="h-5 w-5 text-[#002855]" />
-                Country Stay Summary
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {request.countryStays.length === 0 ? (
-                <p className="py-4 text-center text-sm text-gray-400">
-                  Country stays auto-calculated from itinerary
-                </p>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-slate-50">
-                      <TableHead>Country</TableHead>
-                      <TableHead>Entry</TableHead>
-                      <TableHead>Exit</TableHead>
-                      <TableHead>Nights</TableHead>
-                      <TableHead>UN Clearance</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {request.countryStays.map((cs) => (
-                      <TableRow key={cs.country}>
-                        <TableCell className="font-medium">{cs.country}</TableCell>
-                        <TableCell>
-                          {format(new Date(cs.entryDate), "MMM d, yyyy")}
-                        </TableCell>
-                        <TableCell>
-                          {format(new Date(cs.exitDate), "MMM d, yyyy")}
-                        </TableCell>
-                        <TableCell>{cs.totalNights}</TableCell>
-                        <TableCell>
-                          {cs.requiresUNClearance ? (
-                            <Badge className="bg-amber-100 text-amber-800 border-amber-300">
-                              Required
-                            </Badge>
-                          ) : (
-                            <Badge variant="secondary">Not Required</Badge>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
+          <CountryStayTable countryStays={request.countryStays} />
 
           {/* Notes */}
           <Card>
