@@ -40,7 +40,7 @@ export function AdvancedFiltersPanel({
     for (const r of requests) {
       if (r.primaryDestination) set.add(r.primaryDestination);
     }
-    return Array.from(set).sort();
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [requests]);
 
   const approvers = useMemo(() => {
@@ -48,7 +48,7 @@ export function AdvancedFiltersPanel({
     for (const r of requests) {
       if (r.approver) set.add(r.approver);
     }
-    return Array.from(set).sort();
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [requests]);
 
   const activeCount = useMemo(() => {
