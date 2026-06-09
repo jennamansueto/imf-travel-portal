@@ -1,46 +1,51 @@
-import type { TravelRequest, Traveler, SimulatedEmail, WorkflowConfig } from "@/types";
+import type { TravelRequest, Traveler, SimulatedEmail, WorkflowConfig, ItineraryLeg, Accommodation, CountryStay, AuditEntry, ValidationIssue, Comment } from "@/types";
+
+// Factory helpers to reduce structural repetition
+function leg(id: string, legNumber: number, from: [string, string], to: [string, string], dep: [string, string], arr: [string, string], transport: "flight" | "train" | "car", carrier: string, flight: string, toAirport: string, fromAirport: string): ItineraryLeg {
+  return { id, legNumber, departureCity: from[0], departureCountry: from[1], arrivalCity: to[0], arrivalCountry: to[1], departureDate: dep[0], departureTime: dep[1], arrivalDate: arr[0], arrivalTime: arr[1], modeOfTransport: transport, carrier, flightNumber: flight, transportToAirport: toAirport, transportFromAirport: fromAirport };
+}
+
+function acc(id: string, legId: string, hotelName: string, checkIn: string, checkOut: string, confirmation: string, rate: number, currency = "USD"): Accommodation {
+  return { id, legId, hotelName, checkInDate: checkIn, checkOutDate: checkOut, confirmationNumber: confirmation, nightlyRate: rate, currency };
+}
+
+function stay(country: string, entry: string, exit: string, nights: number, un: boolean): CountryStay {
+  return { country, entryDate: entry, exitDate: exit, totalNights: nights, requiresUNClearance: un };
+}
+
+function audit(id: string, timestamp: string, actor: string, actorRole: string, action: string, details: string, ip: string): AuditEntry {
+  return { id, timestamp, actor, actorRole: actorRole as AuditEntry["actorRole"], action, details, ipAddress: ip };
+}
+
+function validation(id: string, field: string, severity: "error" | "warning", message: string): ValidationIssue {
+  return { id, field, severity, message };
+}
+
+function comment(id: string, author: string, authorRole: string, content: string, timestamp: string): Comment {
+  return { id, author, authorRole: authorRole as Comment["authorRole"], content, timestamp };
+}
+
+// Shared locations & transport
+const DC: [string, string] = ["Washington, D.C.", "United States"];
+const PARIS: [string, string] = ["Paris", "France"];
+const IMF_SHUTTLE = "IMF shuttle service";
+const HOTEL_TRANSFER = "Hotel transfer arranged";
+
+// IPs for actors
+const IP_VASQUEZ = "10.0.42.118";
+const IP_ASANTE = "10.0.42.205";
+const IP_LAURENT = "10.0.55.42";
+const IP_PATEL = "10.0.42.301";
+const IP_CHEN = "10.0.42.88";
+const IP_WILLIAMS = "10.0.42.150";
+const IP_SYSTEM = "10.0.0.1";
+const IP_UNDSS = "192.168.1.1";
 
 export const travelers: Traveler[] = [
-  {
-    id: "t1",
-    employeeId: "IMF-40231",
-    name: "Elena Vasquez",
-    email: "evasquez@imf.org",
-    phone: "+1 (202) 555-0142",
-    department: "Fiscal Affairs",
-    division: "Tax Policy",
-    dutyStation: "Washington, D.C.",
-  },
-  {
-    id: "t2",
-    employeeId: "IMF-38764",
-    name: "Kwame Asante",
-    email: "kasante@imf.org",
-    phone: "+1 (202) 555-0198",
-    department: "African Department",
-    division: "East Africa",
-    dutyStation: "Washington, D.C.",
-  },
-  {
-    id: "t3",
-    employeeId: "IMF-42108",
-    name: "Sophie Laurent",
-    email: "slaurent@imf.org",
-    phone: "+33 1 40 69 30 00",
-    department: "European Department",
-    division: "Euro Area Policies",
-    dutyStation: "Paris, France",
-  },
-  {
-    id: "t4",
-    employeeId: "IMF-39455",
-    name: "Raj Patel",
-    email: "rpatel@imf.org",
-    phone: "+1 (202) 555-0267",
-    department: "Statistics",
-    division: "Data Management",
-    dutyStation: "Washington, D.C.",
-  },
+  { id: "t1", employeeId: "IMF-40231", name: "Elena Vasquez", email: "evasquez@imf.org", phone: "+1 (202) 555-0142", department: "Fiscal Affairs", division: "Tax Policy", dutyStation: "Washington, D.C." },
+  { id: "t2", employeeId: "IMF-38764", name: "Kwame Asante", email: "kasante@imf.org", phone: "+1 (202) 555-0198", department: "African Department", division: "East Africa", dutyStation: "Washington, D.C." },
+  { id: "t3", employeeId: "IMF-42108", name: "Sophie Laurent", email: "slaurent@imf.org", phone: "+33 1 40 69 30 00", department: "European Department", division: "Euro Area Policies", dutyStation: "Paris, France" },
+  { id: "t4", employeeId: "IMF-39455", name: "Raj Patel", email: "rpatel@imf.org", phone: "+1 (202) 555-0267", department: "Statistics", division: "Data Management", dutyStation: "Washington, D.C." },
 ];
 
 export const defaultWorkflowConfig: WorkflowConfig = {
@@ -62,63 +67,20 @@ export const travelRequests: TravelRequest[] = [
     updatedAt: "2026-06-04T14:22:00Z",
     internalNotes: "Annual Article IV consultation with Kenya Central Bank",
     itinerary: [
-      {
-        id: "leg-001a",
-        legNumber: 1,
-        departureCity: "Washington, D.C.",
-        departureCountry: "United States",
-        arrivalCity: "Nairobi",
-        arrivalCountry: "Kenya",
-        departureDate: "2026-07-15",
-        departureTime: "22:30",
-        arrivalDate: "2026-07-16",
-        arrivalTime: "18:45",
-        modeOfTransport: "flight",
-        carrier: "Ethiopian Airlines",
-        flightNumber: "ET 501",
-        transportToAirport: "IMF shuttle service",
-        transportFromAirport: "Hotel transfer arranged",
-      },
-      {
-        id: "leg-001b",
-        legNumber: 2,
-        departureCity: "Nairobi",
-        departureCountry: "Kenya",
-        arrivalCity: "Washington, D.C.",
-        arrivalCountry: "United States",
-        departureDate: "2026-07-22",
-        departureTime: "23:15",
-        arrivalDate: "2026-07-23",
-        arrivalTime: "08:30",
-        modeOfTransport: "flight",
-        carrier: "Ethiopian Airlines",
-        flightNumber: "ET 500",
-        transportToAirport: "Hotel transfer arranged",
-        transportFromAirport: "IMF shuttle service",
-      },
+      leg("leg-001a", 1, DC, ["Nairobi", "Kenya"], ["2026-07-15", "22:30"], ["2026-07-16", "18:45"], "flight", "Ethiopian Airlines", "ET 501", IMF_SHUTTLE, HOTEL_TRANSFER),
+      leg("leg-001b", 2, ["Nairobi", "Kenya"], DC, ["2026-07-22", "23:15"], ["2026-07-23", "08:30"], "flight", "Ethiopian Airlines", "ET 500", HOTEL_TRANSFER, IMF_SHUTTLE),
     ],
     accommodations: [
-      {
-        id: "acc-001a",
-        legId: "leg-001a",
-        hotelName: "Sarova Stanley Hotel",
-        checkInDate: "2026-07-16",
-        checkOutDate: "2026-07-22",
-        confirmationNumber: "SVS-294817",
-        nightlyRate: 245,
-        currency: "USD",
-      },
+      acc("acc-001a", "leg-001a", "Sarova Stanley Hotel", "2026-07-16", "2026-07-22", "SVS-294817", 245),
     ],
-    countryStays: [
-      { country: "Kenya", entryDate: "2026-07-16", exitDate: "2026-07-22", totalNights: 6, requiresUNClearance: true },
-    ],
+    countryStays: [stay("Kenya", "2026-07-16", "2026-07-22", 6, true)],
     comments: [],
     auditTrail: [
-      { id: "aud-001a", timestamp: "2026-06-01T09:30:00Z", actor: "Elena Vasquez", actorRole: "requestor", action: "Created", details: "Travel request created as draft", ipAddress: "10.0.42.118" },
-      { id: "aud-001b", timestamp: "2026-06-04T14:22:00Z", actor: "Elena Vasquez", actorRole: "requestor", action: "Updated", details: "Added accommodation details", ipAddress: "10.0.42.118" },
+      audit("aud-001a", "2026-06-01T09:30:00Z", "Elena Vasquez", "requestor", "Created", "Travel request created as draft", IP_VASQUEZ),
+      audit("aud-001b", "2026-06-04T14:22:00Z", "Elena Vasquez", "requestor", "Updated", "Added accommodation details", IP_VASQUEZ),
     ],
     validationIssues: [
-      { id: "val-001a", field: "itinerary[1].transportFromAirport", severity: "warning", message: "Consider confirming airport transfer arrangements for return leg" },
+      validation("val-001a", "itinerary[1].transportFromAirport", "warning", "Consider confirming airport transfer arrangements for return leg"),
     ],
   },
   {
@@ -134,46 +96,22 @@ export const travelRequests: TravelRequest[] = [
     updatedAt: "2026-06-02T16:45:00Z",
     internalNotes: "Regional economic outlook meeting with African Union",
     itinerary: [
-      {
-        id: "leg-002a", legNumber: 1,
-        departureCity: "Washington, D.C.", departureCountry: "United States",
-        arrivalCity: "Addis Ababa", arrivalCountry: "Ethiopia",
-        departureDate: "2026-07-08", departureTime: "21:00",
-        arrivalDate: "2026-07-09", arrivalTime: "19:30",
-        modeOfTransport: "flight", carrier: "Ethiopian Airlines", flightNumber: "ET 503",
-        transportToAirport: "Personal vehicle", transportFromAirport: "UN compound shuttle",
-      },
-      {
-        id: "leg-002b", legNumber: 2,
-        departureCity: "Addis Ababa", departureCountry: "Ethiopia",
-        arrivalCity: "Nairobi", arrivalCountry: "Kenya",
-        departureDate: "2026-07-14", departureTime: "10:00",
-        arrivalDate: "2026-07-14", arrivalTime: "12:15",
-        modeOfTransport: "flight", carrier: "Kenya Airways", flightNumber: "KQ 451",
-        transportToAirport: "UN compound shuttle", transportFromAirport: "Hotel transfer",
-      },
-      {
-        id: "leg-002c", legNumber: 3,
-        departureCity: "Nairobi", departureCountry: "Kenya",
-        arrivalCity: "Washington, D.C.", arrivalCountry: "United States",
-        departureDate: "2026-07-18", departureTime: "23:45",
-        arrivalDate: "2026-07-19", arrivalTime: "09:00",
-        modeOfTransport: "flight", carrier: "Delta Air Lines", flightNumber: "DL 221",
-        transportToAirport: "Hotel transfer", transportFromAirport: "IMF shuttle service",
-      },
+      leg("leg-002a", 1, DC, ["Addis Ababa", "Ethiopia"], ["2026-07-08", "21:00"], ["2026-07-09", "19:30"], "flight", "Ethiopian Airlines", "ET 503", "Personal vehicle", "UN compound shuttle"),
+      leg("leg-002b", 2, ["Addis Ababa", "Ethiopia"], ["Nairobi", "Kenya"], ["2026-07-14", "10:00"], ["2026-07-14", "12:15"], "flight", "Kenya Airways", "KQ 451", "UN compound shuttle", "Hotel transfer"),
+      leg("leg-002c", 3, ["Nairobi", "Kenya"], DC, ["2026-07-18", "23:45"], ["2026-07-19", "09:00"], "flight", "Delta Air Lines", "DL 221", "Hotel transfer", IMF_SHUTTLE),
     ],
     accommodations: [
-      { id: "acc-002a", legId: "leg-002a", hotelName: "Hilton Addis Ababa", checkInDate: "2026-07-09", checkOutDate: "2026-07-14", confirmationNumber: "HIL-482910", nightlyRate: 195, currency: "USD" },
-      { id: "acc-002b", legId: "leg-002b", hotelName: "Sarova Stanley Hotel", checkInDate: "2026-07-14", checkOutDate: "2026-07-18", confirmationNumber: "SVS-384729", nightlyRate: 245, currency: "USD" },
+      acc("acc-002a", "leg-002a", "Hilton Addis Ababa", "2026-07-09", "2026-07-14", "HIL-482910", 195),
+      acc("acc-002b", "leg-002b", "Sarova Stanley Hotel", "2026-07-14", "2026-07-18", "SVS-384729", 245),
     ],
     countryStays: [
-      { country: "Ethiopia", entryDate: "2026-07-09", exitDate: "2026-07-14", totalNights: 5, requiresUNClearance: true },
-      { country: "Kenya", entryDate: "2026-07-14", exitDate: "2026-07-18", totalNights: 4, requiresUNClearance: true },
+      stay("Ethiopia", "2026-07-09", "2026-07-14", 5, true),
+      stay("Kenya", "2026-07-14", "2026-07-18", 4, true),
     ],
     comments: [],
     auditTrail: [
-      { id: "aud-002a", timestamp: "2026-05-28T11:15:00Z", actor: "Kwame Asante", actorRole: "requestor", action: "Created", details: "Travel request created", ipAddress: "10.0.42.205" },
-      { id: "aud-002b", timestamp: "2026-06-02T16:45:00Z", actor: "Kwame Asante", actorRole: "requestor", action: "Submitted", details: "Submitted for approval", ipAddress: "10.0.42.205" },
+      audit("aud-002a", "2026-05-28T11:15:00Z", "Kwame Asante", "requestor", "Created", "Travel request created", IP_ASANTE),
+      audit("aud-002b", "2026-06-02T16:45:00Z", "Kwame Asante", "requestor", "Submitted", "Submitted for approval", IP_ASANTE),
     ],
     validationIssues: [],
   },
@@ -190,38 +128,20 @@ export const travelRequests: TravelRequest[] = [
     updatedAt: "2026-06-03T10:30:00Z",
     internalNotes: "G7 preparatory consultations with Bank of Japan",
     itinerary: [
-      {
-        id: "leg-003a", legNumber: 1,
-        departureCity: "Paris", departureCountry: "France",
-        arrivalCity: "Tokyo", arrivalCountry: "Japan",
-        departureDate: "2026-06-25", departureTime: "13:30",
-        arrivalDate: "2026-06-26", arrivalTime: "08:45",
-        modeOfTransport: "flight", carrier: "Air France", flightNumber: "AF 276",
-        transportToAirport: "RER B + OrlyVal", transportFromAirport: "Narita Express",
-      },
-      {
-        id: "leg-003b", legNumber: 2,
-        departureCity: "Tokyo", departureCountry: "Japan",
-        arrivalCity: "Paris", arrivalCountry: "France",
-        departureDate: "2026-07-05", departureTime: "10:15",
-        arrivalDate: "2026-07-05", arrivalTime: "16:30",
-        modeOfTransport: "flight", carrier: "Air France", flightNumber: "AF 275",
-        transportToAirport: "Narita Express", transportFromAirport: "RER B + OrlyVal",
-      },
+      leg("leg-003a", 1, PARIS, ["Tokyo", "Japan"], ["2026-06-25", "13:30"], ["2026-06-26", "08:45"], "flight", "Air France", "AF 276", "RER B + OrlyVal", "Narita Express"),
+      leg("leg-003b", 2, ["Tokyo", "Japan"], PARIS, ["2026-07-05", "10:15"], ["2026-07-05", "16:30"], "flight", "Air France", "AF 275", "Narita Express", "RER B + OrlyVal"),
     ],
     accommodations: [
-      { id: "acc-003a", legId: "leg-003a", hotelName: "Palace Hotel Tokyo", checkInDate: "2026-06-26", checkOutDate: "2026-07-05", confirmationNumber: "PHT-192048", nightlyRate: 380, currency: "USD" },
+      acc("acc-003a", "leg-003a", "Palace Hotel Tokyo", "2026-06-26", "2026-07-05", "PHT-192048", 380),
     ],
-    countryStays: [
-      { country: "Japan", entryDate: "2026-06-26", exitDate: "2026-07-05", totalNights: 9, requiresUNClearance: false },
-    ],
+    countryStays: [stay("Japan", "2026-06-26", "2026-07-05", 9, false)],
     comments: [
-      { id: "cmt-003a", author: "Michael Chen", authorRole: "approver", content: "Please clarify the purpose of 9 nights in Tokyo — standard G7 prep consultations are 5 business days. If additional meetings are planned, please add them to the justification notes.", timestamp: "2026-06-03T10:30:00Z" },
+      comment("cmt-003a", "Michael Chen", "approver", "Please clarify the purpose of 9 nights in Tokyo — standard G7 prep consultations are 5 business days. If additional meetings are planned, please add them to the justification notes.", "2026-06-03T10:30:00Z"),
     ],
     auditTrail: [
-      { id: "aud-003a", timestamp: "2026-05-20T08:00:00Z", actor: "Sophie Laurent", actorRole: "requestor", action: "Created", details: "Travel request created", ipAddress: "10.0.55.42" },
-      { id: "aud-003b", timestamp: "2026-05-25T14:00:00Z", actor: "Sophie Laurent", actorRole: "requestor", action: "Submitted", details: "Submitted for approval", ipAddress: "10.0.55.42" },
-      { id: "aud-003c", timestamp: "2026-06-03T10:30:00Z", actor: "Michael Chen", actorRole: "approver", action: "Returned", details: "Returned for corrections — trip duration justification needed", ipAddress: "10.0.42.88" },
+      audit("aud-003a", "2026-05-20T08:00:00Z", "Sophie Laurent", "requestor", "Created", "Travel request created", IP_LAURENT),
+      audit("aud-003b", "2026-05-25T14:00:00Z", "Sophie Laurent", "requestor", "Submitted", "Submitted for approval", IP_LAURENT),
+      audit("aud-003c", "2026-06-03T10:30:00Z", "Michael Chen", "approver", "Returned", "Returned for corrections — trip duration justification needed", IP_CHEN),
     ],
     validationIssues: [],
   },
@@ -238,38 +158,20 @@ export const travelRequests: TravelRequest[] = [
     updatedAt: "2026-06-01T09:15:00Z",
     internalNotes: "Statistical capacity building workshop",
     itinerary: [
-      {
-        id: "leg-004a", legNumber: 1,
-        departureCity: "Washington, D.C.", departureCountry: "United States",
-        arrivalCity: "Lima", arrivalCountry: "Peru",
-        departureDate: "2026-06-20", departureTime: "08:00",
-        arrivalDate: "2026-06-20", arrivalTime: "14:30",
-        modeOfTransport: "flight", carrier: "LATAM Airlines", flightNumber: "LA 2480",
-        transportToAirport: "IMF shuttle service", transportFromAirport: "Hotel transfer arranged",
-      },
-      {
-        id: "leg-004b", legNumber: 2,
-        departureCity: "Lima", departureCountry: "Peru",
-        arrivalCity: "Washington, D.C.", arrivalCountry: "United States",
-        departureDate: "2026-06-27", departureTime: "23:45",
-        arrivalDate: "2026-06-28", arrivalTime: "07:15",
-        modeOfTransport: "flight", carrier: "LATAM Airlines", flightNumber: "LA 2481",
-        transportToAirport: "Hotel transfer arranged", transportFromAirport: "IMF shuttle service",
-      },
+      leg("leg-004a", 1, DC, ["Lima", "Peru"], ["2026-06-20", "08:00"], ["2026-06-20", "14:30"], "flight", "LATAM Airlines", "LA 2480", IMF_SHUTTLE, HOTEL_TRANSFER),
+      leg("leg-004b", 2, ["Lima", "Peru"], DC, ["2026-06-27", "23:45"], ["2026-06-28", "07:15"], "flight", "LATAM Airlines", "LA 2481", HOTEL_TRANSFER, IMF_SHUTTLE),
     ],
     accommodations: [
-      { id: "acc-004a", legId: "leg-004a", hotelName: "JW Marriott Lima", checkInDate: "2026-06-20", checkOutDate: "2026-06-27", confirmationNumber: "JWM-584920", nightlyRate: 210, currency: "USD" },
+      acc("acc-004a", "leg-004a", "JW Marriott Lima", "2026-06-20", "2026-06-27", "JWM-584920", 210),
     ],
-    countryStays: [
-      { country: "Peru", entryDate: "2026-06-20", exitDate: "2026-06-27", totalNights: 7, requiresUNClearance: false },
-    ],
+    countryStays: [stay("Peru", "2026-06-20", "2026-06-27", 7, false)],
     comments: [
-      { id: "cmt-004a", author: "Sarah Williams", authorRole: "approver", content: "Approved. Please ensure workshop materials are coordinated with Lima office beforehand.", timestamp: "2026-06-01T09:15:00Z" },
+      comment("cmt-004a", "Sarah Williams", "approver", "Approved. Please ensure workshop materials are coordinated with Lima office beforehand.", "2026-06-01T09:15:00Z"),
     ],
     auditTrail: [
-      { id: "aud-004a", timestamp: "2026-05-15T13:00:00Z", actor: "Raj Patel", actorRole: "requestor", action: "Created", details: "Travel request created", ipAddress: "10.0.42.301" },
-      { id: "aud-004b", timestamp: "2026-05-28T11:00:00Z", actor: "Raj Patel", actorRole: "requestor", action: "Submitted", details: "Submitted for approval", ipAddress: "10.0.42.301" },
-      { id: "aud-004c", timestamp: "2026-06-01T09:15:00Z", actor: "Sarah Williams", actorRole: "approver", action: "Approved", details: "Request approved", ipAddress: "10.0.42.150" },
+      audit("aud-004a", "2026-05-15T13:00:00Z", "Raj Patel", "requestor", "Created", "Travel request created", IP_PATEL),
+      audit("aud-004b", "2026-05-28T11:00:00Z", "Raj Patel", "requestor", "Submitted", "Submitted for approval", IP_PATEL),
+      audit("aud-004c", "2026-06-01T09:15:00Z", "Sarah Williams", "approver", "Approved", "Request approved", IP_WILLIAMS),
     ],
     validationIssues: [],
   },
@@ -286,61 +188,29 @@ export const travelRequests: TravelRequest[] = [
     updatedAt: "2026-05-30T15:30:00Z",
     internalNotes: "Emergency fiscal assessment mission",
     itinerary: [
-      {
-        id: "leg-005a", legNumber: 1,
-        departureCity: "Washington, D.C.", departureCountry: "United States",
-        arrivalCity: "Dubai", arrivalCountry: "United Arab Emirates",
-        departureDate: "2026-08-05", departureTime: "20:00",
-        arrivalDate: "2026-08-06", arrivalTime: "16:30",
-        modeOfTransport: "flight", carrier: "Emirates", flightNumber: "EK 232",
-        transportToAirport: "IMF shuttle service", transportFromAirport: "Transit hotel shuttle",
-      },
-      {
-        id: "leg-005b", legNumber: 2,
-        departureCity: "Dubai", departureCountry: "United Arab Emirates",
-        arrivalCity: "Kabul", arrivalCountry: "Afghanistan",
-        departureDate: "2026-08-07", departureTime: "06:00",
-        arrivalDate: "2026-08-07", arrivalTime: "08:30",
-        modeOfTransport: "flight", carrier: "Kam Air", flightNumber: "RQ 320",
-        transportToAirport: "Transit hotel shuttle", transportFromAirport: "UN security escort",
-      },
-      {
-        id: "leg-005c", legNumber: 3,
-        departureCity: "Kabul", departureCountry: "Afghanistan",
-        arrivalCity: "Dubai", arrivalCountry: "United Arab Emirates",
-        departureDate: "2026-08-12", departureTime: "10:00",
-        arrivalDate: "2026-08-12", arrivalTime: "12:30",
-        modeOfTransport: "flight", carrier: "Kam Air", flightNumber: "RQ 321",
-        transportToAirport: "UN security escort", transportFromAirport: "Transit hotel shuttle",
-      },
-      {
-        id: "leg-005d", legNumber: 4,
-        departureCity: "Dubai", departureCountry: "United Arab Emirates",
-        arrivalCity: "Washington, D.C.", arrivalCountry: "United States",
-        departureDate: "2026-08-13", departureTime: "02:30",
-        arrivalDate: "2026-08-13", arrivalTime: "08:00",
-        modeOfTransport: "flight", carrier: "Emirates", flightNumber: "EK 231",
-        transportToAirport: "Transit hotel shuttle", transportFromAirport: "IMF shuttle service",
-      },
+      leg("leg-005a", 1, DC, ["Dubai", "United Arab Emirates"], ["2026-08-05", "20:00"], ["2026-08-06", "16:30"], "flight", "Emirates", "EK 232", IMF_SHUTTLE, "Transit hotel shuttle"),
+      leg("leg-005b", 2, ["Dubai", "United Arab Emirates"], ["Kabul", "Afghanistan"], ["2026-08-07", "06:00"], ["2026-08-07", "08:30"], "flight", "Kam Air", "RQ 320", "Transit hotel shuttle", "UN security escort"),
+      leg("leg-005c", 3, ["Kabul", "Afghanistan"], ["Dubai", "United Arab Emirates"], ["2026-08-12", "10:00"], ["2026-08-12", "12:30"], "flight", "Kam Air", "RQ 321", "UN security escort", "Transit hotel shuttle"),
+      leg("leg-005d", 4, ["Dubai", "United Arab Emirates"], DC, ["2026-08-13", "02:30"], ["2026-08-13", "08:00"], "flight", "Emirates", "EK 231", "Transit hotel shuttle", IMF_SHUTTLE),
     ],
     accommodations: [
-      { id: "acc-005a", legId: "leg-005a", hotelName: "Dubai International Hotel", checkInDate: "2026-08-06", checkOutDate: "2026-08-07", confirmationNumber: "DIH-938271", nightlyRate: 150, currency: "USD" },
-      { id: "acc-005b", legId: "leg-005b", hotelName: "Serena Hotel Kabul", checkInDate: "2026-08-07", checkOutDate: "2026-08-12", confirmationNumber: "SHK-472019", nightlyRate: 180, currency: "USD" },
-      { id: "acc-005c", legId: "leg-005c", hotelName: "Dubai International Hotel", checkInDate: "2026-08-12", checkOutDate: "2026-08-13", confirmationNumber: "DIH-938285", nightlyRate: 150, currency: "USD" },
+      acc("acc-005a", "leg-005a", "Dubai International Hotel", "2026-08-06", "2026-08-07", "DIH-938271", 150),
+      acc("acc-005b", "leg-005b", "Serena Hotel Kabul", "2026-08-07", "2026-08-12", "SHK-472019", 180),
+      acc("acc-005c", "leg-005c", "Dubai International Hotel", "2026-08-12", "2026-08-13", "DIH-938285", 150),
     ],
     countryStays: [
-      { country: "United Arab Emirates", entryDate: "2026-08-06", exitDate: "2026-08-07", totalNights: 1, requiresUNClearance: false },
-      { country: "Afghanistan", entryDate: "2026-08-07", exitDate: "2026-08-12", totalNights: 5, requiresUNClearance: true },
-      { country: "United Arab Emirates", entryDate: "2026-08-12", exitDate: "2026-08-13", totalNights: 1, requiresUNClearance: false },
+      stay("United Arab Emirates", "2026-08-06", "2026-08-07", 1, false),
+      stay("Afghanistan", "2026-08-07", "2026-08-12", 5, true),
+      stay("United Arab Emirates", "2026-08-12", "2026-08-13", 1, false),
     ],
     comments: [
-      { id: "cmt-005a", author: "Michael Chen", authorRole: "approver", content: "Approved with priority flag. Security clearance required for Afghanistan. Ensure all UN DSS protocols are followed.", timestamp: "2026-05-30T15:30:00Z" },
+      comment("cmt-005a", "Michael Chen", "approver", "Approved with priority flag. Security clearance required for Afghanistan. Ensure all UN DSS protocols are followed.", "2026-05-30T15:30:00Z"),
     ],
     auditTrail: [
-      { id: "aud-005a", timestamp: "2026-05-10T10:00:00Z", actor: "Elena Vasquez", actorRole: "requestor", action: "Created", details: "Travel request created", ipAddress: "10.0.42.118" },
-      { id: "aud-005b", timestamp: "2026-05-22T09:00:00Z", actor: "Elena Vasquez", actorRole: "requestor", action: "Submitted", details: "Submitted for approval", ipAddress: "10.0.42.118" },
-      { id: "aud-005c", timestamp: "2026-05-30T15:30:00Z", actor: "Michael Chen", actorRole: "approver", action: "Approved", details: "Request approved with priority flag", ipAddress: "10.0.42.88" },
-      { id: "aud-005d", timestamp: "2026-05-30T15:31:00Z", actor: "System", actorRole: "administrator", action: "Sent to UN", details: "CSV payload generated and sent to UN Security", ipAddress: "10.0.0.1" },
+      audit("aud-005a", "2026-05-10T10:00:00Z", "Elena Vasquez", "requestor", "Created", "Travel request created", IP_VASQUEZ),
+      audit("aud-005b", "2026-05-22T09:00:00Z", "Elena Vasquez", "requestor", "Submitted", "Submitted for approval", IP_VASQUEZ),
+      audit("aud-005c", "2026-05-30T15:30:00Z", "Michael Chen", "approver", "Approved", "Request approved with priority flag", IP_CHEN),
+      audit("aud-005d", "2026-05-30T15:31:00Z", "System", "administrator", "Sent to UN", "CSV payload generated and sent to UN Security", IP_SYSTEM),
     ],
     validationIssues: [],
   },
@@ -361,40 +231,22 @@ export const travelRequests: TravelRequest[] = [
     unResponseTimestamp: "2026-05-25T11:00:00Z",
     unComments: "Security clearance granted. Standard protocols apply. Traveler should register with UNDSS Maputo upon arrival.",
     itinerary: [
-      {
-        id: "leg-006a", legNumber: 1,
-        departureCity: "Washington, D.C.", departureCountry: "United States",
-        arrivalCity: "Maputo", arrivalCountry: "Mozambique",
-        departureDate: "2026-06-10", departureTime: "18:00",
-        arrivalDate: "2026-06-11", arrivalTime: "15:30",
-        modeOfTransport: "flight", carrier: "South African Airways", flightNumber: "SA 204",
-        transportToAirport: "IMF shuttle service", transportFromAirport: "Embassy vehicle",
-      },
-      {
-        id: "leg-006b", legNumber: 2,
-        departureCity: "Maputo", departureCountry: "Mozambique",
-        arrivalCity: "Washington, D.C.", arrivalCountry: "United States",
-        departureDate: "2026-06-17", departureTime: "20:00",
-        arrivalDate: "2026-06-18", arrivalTime: "07:45",
-        modeOfTransport: "flight", carrier: "South African Airways", flightNumber: "SA 205",
-        transportToAirport: "Embassy vehicle", transportFromAirport: "IMF shuttle service",
-      },
+      leg("leg-006a", 1, DC, ["Maputo", "Mozambique"], ["2026-06-10", "18:00"], ["2026-06-11", "15:30"], "flight", "South African Airways", "SA 204", IMF_SHUTTLE, "Embassy vehicle"),
+      leg("leg-006b", 2, ["Maputo", "Mozambique"], DC, ["2026-06-17", "20:00"], ["2026-06-18", "07:45"], "flight", "South African Airways", "SA 205", "Embassy vehicle", IMF_SHUTTLE),
     ],
     accommodations: [
-      { id: "acc-006a", legId: "leg-006a", hotelName: "Polana Serena Hotel", checkInDate: "2026-06-11", checkOutDate: "2026-06-17", confirmationNumber: "PSH-672841", nightlyRate: 175, currency: "USD" },
+      acc("acc-006a", "leg-006a", "Polana Serena Hotel", "2026-06-11", "2026-06-17", "PSH-672841", 175),
     ],
-    countryStays: [
-      { country: "Mozambique", entryDate: "2026-06-11", exitDate: "2026-06-17", totalNights: 6, requiresUNClearance: true },
-    ],
+    countryStays: [stay("Mozambique", "2026-06-11", "2026-06-17", 6, true)],
     comments: [
-      { id: "cmt-006a", author: "Sarah Williams", authorRole: "approver", content: "Approved. Good preparation documentation.", timestamp: "2026-05-15T09:00:00Z" },
+      comment("cmt-006a", "Sarah Williams", "approver", "Approved. Good preparation documentation.", "2026-05-15T09:00:00Z"),
     ],
     auditTrail: [
-      { id: "aud-006a", timestamp: "2026-04-28T14:00:00Z", actor: "Kwame Asante", actorRole: "requestor", action: "Created", details: "Travel request created", ipAddress: "10.0.42.205" },
-      { id: "aud-006b", timestamp: "2026-05-10T11:00:00Z", actor: "Kwame Asante", actorRole: "requestor", action: "Submitted", details: "Submitted for approval", ipAddress: "10.0.42.205" },
-      { id: "aud-006c", timestamp: "2026-05-15T09:00:00Z", actor: "Sarah Williams", actorRole: "approver", action: "Approved", details: "Request approved", ipAddress: "10.0.42.150" },
-      { id: "aud-006d", timestamp: "2026-05-15T09:01:00Z", actor: "System", actorRole: "administrator", action: "Sent to UN", details: "CSV payload sent to UN Security", ipAddress: "10.0.0.1" },
-      { id: "aud-006e", timestamp: "2026-05-25T11:00:00Z", actor: "UNDSS", actorRole: "administrator", action: "UN Approved", details: "Security clearance granted by Capt. James Okonkwo", ipAddress: "192.168.1.1" },
+      audit("aud-006a", "2026-04-28T14:00:00Z", "Kwame Asante", "requestor", "Created", "Travel request created", IP_ASANTE),
+      audit("aud-006b", "2026-05-10T11:00:00Z", "Kwame Asante", "requestor", "Submitted", "Submitted for approval", IP_ASANTE),
+      audit("aud-006c", "2026-05-15T09:00:00Z", "Sarah Williams", "approver", "Approved", "Request approved", IP_WILLIAMS),
+      audit("aud-006d", "2026-05-15T09:01:00Z", "System", "administrator", "Sent to UN", "CSV payload sent to UN Security", IP_SYSTEM),
+      audit("aud-006e", "2026-05-25T11:00:00Z", "UNDSS", "administrator", "UN Approved", "Security clearance granted by Capt. James Okonkwo", IP_UNDSS),
     ],
     validationIssues: [],
   },
@@ -415,40 +267,22 @@ export const travelRequests: TravelRequest[] = [
     unResponseTimestamp: "2026-05-28T14:00:00Z",
     unComments: "Security clearance denied. Current security situation in Bangui does not permit non-essential travel. Recommend postponing to Q4 2026 pending security reassessment.",
     itinerary: [
-      {
-        id: "leg-007a", legNumber: 1,
-        departureCity: "Paris", departureCountry: "France",
-        arrivalCity: "Bangui", arrivalCountry: "Central African Republic",
-        departureDate: "2026-07-01", departureTime: "09:00",
-        arrivalDate: "2026-07-01", arrivalTime: "17:30",
-        modeOfTransport: "flight", carrier: "Air France", flightNumber: "AF 898",
-        transportToAirport: "Taxi", transportFromAirport: "UN security escort",
-      },
-      {
-        id: "leg-007b", legNumber: 2,
-        departureCity: "Bangui", departureCountry: "Central African Republic",
-        arrivalCity: "Paris", arrivalCountry: "France",
-        departureDate: "2026-07-08", departureTime: "18:00",
-        arrivalDate: "2026-07-09", arrivalTime: "06:30",
-        modeOfTransport: "flight", carrier: "Air France", flightNumber: "AF 899",
-        transportToAirport: "UN security escort", transportFromAirport: "Taxi",
-      },
+      leg("leg-007a", 1, PARIS, ["Bangui", "Central African Republic"], ["2026-07-01", "09:00"], ["2026-07-01", "17:30"], "flight", "Air France", "AF 898", "Taxi", "UN security escort"),
+      leg("leg-007b", 2, ["Bangui", "Central African Republic"], PARIS, ["2026-07-08", "18:00"], ["2026-07-09", "06:30"], "flight", "Air France", "AF 899", "UN security escort", "Taxi"),
     ],
     accommodations: [
-      { id: "acc-007a", legId: "leg-007a", hotelName: "Ledger Plaza Bangui", checkInDate: "2026-07-01", checkOutDate: "2026-07-08", confirmationNumber: "LPB-294018", nightlyRate: 165, currency: "USD" },
+      acc("acc-007a", "leg-007a", "Ledger Plaza Bangui", "2026-07-01", "2026-07-08", "LPB-294018", 165),
     ],
-    countryStays: [
-      { country: "Central African Republic", entryDate: "2026-07-01", exitDate: "2026-07-08", totalNights: 7, requiresUNClearance: true },
-    ],
+    countryStays: [stay("Central African Republic", "2026-07-01", "2026-07-08", 7, true)],
     comments: [
-      { id: "cmt-007a", author: "Michael Chen", authorRole: "approver", content: "Approved. Mission is time-sensitive.", timestamp: "2026-05-18T10:00:00Z" },
+      comment("cmt-007a", "Michael Chen", "approver", "Approved. Mission is time-sensitive.", "2026-05-18T10:00:00Z"),
     ],
     auditTrail: [
-      { id: "aud-007a", timestamp: "2026-05-01T09:00:00Z", actor: "Sophie Laurent", actorRole: "requestor", action: "Created", details: "Travel request created", ipAddress: "10.0.55.42" },
-      { id: "aud-007b", timestamp: "2026-05-15T16:00:00Z", actor: "Sophie Laurent", actorRole: "requestor", action: "Submitted", details: "Submitted for approval", ipAddress: "10.0.55.42" },
-      { id: "aud-007c", timestamp: "2026-05-18T10:00:00Z", actor: "Michael Chen", actorRole: "approver", action: "Approved", details: "Request approved", ipAddress: "10.0.42.88" },
-      { id: "aud-007d", timestamp: "2026-05-18T10:01:00Z", actor: "System", actorRole: "administrator", action: "Sent to UN", details: "CSV payload sent to UN Security", ipAddress: "10.0.0.1" },
-      { id: "aud-007e", timestamp: "2026-05-28T14:00:00Z", actor: "UNDSS", actorRole: "administrator", action: "UN Rejected", details: "Security clearance denied by Maj. Anita Bergström", ipAddress: "192.168.1.1" },
+      audit("aud-007a", "2026-05-01T09:00:00Z", "Sophie Laurent", "requestor", "Created", "Travel request created", IP_LAURENT),
+      audit("aud-007b", "2026-05-15T16:00:00Z", "Sophie Laurent", "requestor", "Submitted", "Submitted for approval", IP_LAURENT),
+      audit("aud-007c", "2026-05-18T10:00:00Z", "Michael Chen", "approver", "Approved", "Request approved", IP_CHEN),
+      audit("aud-007d", "2026-05-18T10:01:00Z", "System", "administrator", "Sent to UN", "CSV payload sent to UN Security", IP_SYSTEM),
+      audit("aud-007e", "2026-05-28T14:00:00Z", "UNDSS", "administrator", "UN Rejected", "Security clearance denied by Maj. Anita Bergström", IP_UNDSS),
     ],
     validationIssues: [],
   },
@@ -469,46 +303,28 @@ export const travelRequests: TravelRequest[] = [
     unResponseTimestamp: "2026-06-05T13:00:00Z",
     unComments: "Incomplete traveler documentation. Please provide: (1) valid diplomatic passport copy, (2) updated emergency contact information, (3) medical clearance certificate for tropical zone travel.",
     itinerary: [
-      {
-        id: "leg-008a", legNumber: 1,
-        departureCity: "Washington, D.C.", departureCountry: "United States",
-        arrivalCity: "Colombo", arrivalCountry: "Sri Lanka",
-        departureDate: "2026-08-18", departureTime: "14:00",
-        arrivalDate: "2026-08-19", arrivalTime: "18:30",
-        modeOfTransport: "flight", carrier: "Qatar Airways", flightNumber: "QR 764",
-        transportToAirport: "IMF shuttle service", transportFromAirport: "Hotel transfer arranged",
-      },
-      {
-        id: "leg-008b", legNumber: 2,
-        departureCity: "Colombo", departureCountry: "Sri Lanka",
-        arrivalCity: "Washington, D.C.", arrivalCountry: "United States",
-        departureDate: "2026-08-28", departureTime: "01:30",
-        arrivalDate: "2026-08-28", arrivalTime: "14:00",
-        modeOfTransport: "flight", carrier: "Qatar Airways", flightNumber: "QR 765",
-        transportToAirport: "Hotel transfer arranged", transportFromAirport: "IMF shuttle service",
-      },
+      leg("leg-008a", 1, DC, ["Colombo", "Sri Lanka"], ["2026-08-18", "14:00"], ["2026-08-19", "18:30"], "flight", "Qatar Airways", "QR 764", IMF_SHUTTLE, HOTEL_TRANSFER),
+      leg("leg-008b", 2, ["Colombo", "Sri Lanka"], DC, ["2026-08-28", "01:30"], ["2026-08-28", "14:00"], "flight", "Qatar Airways", "QR 765", HOTEL_TRANSFER, IMF_SHUTTLE),
     ],
     accommodations: [
-      { id: "acc-008a", legId: "leg-008a", hotelName: "Shangri-La Colombo", checkInDate: "2026-08-19", checkOutDate: "2026-08-28", confirmationNumber: "SLC-841920", nightlyRate: 230, currency: "USD" },
+      acc("acc-008a", "leg-008a", "Shangri-La Colombo", "2026-08-19", "2026-08-28", "SLC-841920", 230),
     ],
-    countryStays: [
-      { country: "Sri Lanka", entryDate: "2026-08-19", exitDate: "2026-08-28", totalNights: 9, requiresUNClearance: true },
-    ],
+    countryStays: [stay("Sri Lanka", "2026-08-19", "2026-08-28", 9, true)],
     comments: [
-      { id: "cmt-008a", author: "Sarah Williams", authorRole: "approver", content: "Approved.", timestamp: "2026-05-30T08:00:00Z" },
-      { id: "cmt-008b", author: "UNDSS", authorRole: "administrator", content: "Returned for corrections. Missing documentation — see UN comments above.", timestamp: "2026-06-05T13:00:00Z" },
+      comment("cmt-008a", "Sarah Williams", "approver", "Approved.", "2026-05-30T08:00:00Z"),
+      comment("cmt-008b", "UNDSS", "administrator", "Returned for corrections. Missing documentation — see UN comments above.", "2026-06-05T13:00:00Z"),
     ],
     auditTrail: [
-      { id: "aud-008a", timestamp: "2026-05-20T07:30:00Z", actor: "Raj Patel", actorRole: "requestor", action: "Created", details: "Travel request created", ipAddress: "10.0.42.301" },
-      { id: "aud-008b", timestamp: "2026-05-28T10:00:00Z", actor: "Raj Patel", actorRole: "requestor", action: "Submitted", details: "Submitted for approval", ipAddress: "10.0.42.301" },
-      { id: "aud-008c", timestamp: "2026-05-30T08:00:00Z", actor: "Sarah Williams", actorRole: "approver", action: "Approved", details: "Request approved", ipAddress: "10.0.42.150" },
-      { id: "aud-008d", timestamp: "2026-05-30T08:01:00Z", actor: "System", actorRole: "administrator", action: "Sent to UN", details: "CSV payload sent to UN Security", ipAddress: "10.0.0.1" },
-      { id: "aud-008e", timestamp: "2026-06-05T13:00:00Z", actor: "UNDSS", actorRole: "administrator", action: "Returned", details: "Returned for corrections — missing documentation", ipAddress: "192.168.1.1" },
+      audit("aud-008a", "2026-05-20T07:30:00Z", "Raj Patel", "requestor", "Created", "Travel request created", IP_PATEL),
+      audit("aud-008b", "2026-05-28T10:00:00Z", "Raj Patel", "requestor", "Submitted", "Submitted for approval", IP_PATEL),
+      audit("aud-008c", "2026-05-30T08:00:00Z", "Sarah Williams", "approver", "Approved", "Request approved", IP_WILLIAMS),
+      audit("aud-008d", "2026-05-30T08:01:00Z", "System", "administrator", "Sent to UN", "CSV payload sent to UN Security", IP_SYSTEM),
+      audit("aud-008e", "2026-06-05T13:00:00Z", "UNDSS", "administrator", "Returned", "Returned for corrections — missing documentation", IP_UNDSS),
     ],
     validationIssues: [
-      { id: "val-008a", field: "traveler.passport", severity: "error", message: "Diplomatic passport copy required by UN DSS" },
-      { id: "val-008b", field: "traveler.emergencyContact", severity: "error", message: "Emergency contact information must be updated" },
-      { id: "val-008c", field: "traveler.medicalClearance", severity: "error", message: "Medical clearance certificate required for tropical zone travel" },
+      validation("val-008a", "traveler.passport", "error", "Diplomatic passport copy required by UN DSS"),
+      validation("val-008b", "traveler.emergencyContact", "error", "Emergency contact information must be updated"),
+      validation("val-008c", "traveler.medicalClearance", "error", "Medical clearance certificate required for tropical zone travel"),
     ],
   },
   {
@@ -524,37 +340,19 @@ export const travelRequests: TravelRequest[] = [
     updatedAt: "2026-06-04T17:00:00Z",
     internalNotes: "Public financial management reform advisory",
     itinerary: [
-      {
-        id: "leg-009a", legNumber: 1,
-        departureCity: "Washington, D.C.", departureCountry: "United States",
-        arrivalCity: "Kinshasa", arrivalCountry: "Democratic Republic of the Congo",
-        departureDate: "2026-09-01", departureTime: "19:00",
-        arrivalDate: "2026-09-02", arrivalTime: "14:00",
-        modeOfTransport: "flight", carrier: "Ethiopian Airlines", flightNumber: "ET 509",
-        transportToAirport: "IMF shuttle service", transportFromAirport: "UN compound shuttle",
-      },
-      {
-        id: "leg-009b", legNumber: 2,
-        departureCity: "Kinshasa", departureCountry: "Democratic Republic of the Congo",
-        arrivalCity: "Washington, D.C.", arrivalCountry: "United States",
-        departureDate: "2026-09-10", departureTime: "22:00",
-        arrivalDate: "2026-09-11", arrivalTime: "08:30",
-        modeOfTransport: "flight", carrier: "Ethiopian Airlines", flightNumber: "ET 510",
-        transportToAirport: "UN compound shuttle", transportFromAirport: "IMF shuttle service",
-      },
+      leg("leg-009a", 1, DC, ["Kinshasa", "Democratic Republic of the Congo"], ["2026-09-01", "19:00"], ["2026-09-02", "14:00"], "flight", "Ethiopian Airlines", "ET 509", IMF_SHUTTLE, "UN compound shuttle"),
+      leg("leg-009b", 2, ["Kinshasa", "Democratic Republic of the Congo"], DC, ["2026-09-10", "22:00"], ["2026-09-11", "08:30"], "flight", "Ethiopian Airlines", "ET 510", "UN compound shuttle", IMF_SHUTTLE),
     ],
     accommodations: [
-      { id: "acc-009a", legId: "leg-009a", hotelName: "Pullman Kinshasa Grand Hotel", checkInDate: "2026-09-02", checkOutDate: "2026-09-10", confirmationNumber: "PKG-203948", nightlyRate: 200, currency: "USD" },
+      acc("acc-009a", "leg-009a", "Pullman Kinshasa Grand Hotel", "2026-09-02", "2026-09-10", "PKG-203948", 200),
     ],
-    countryStays: [
-      { country: "Democratic Republic of the Congo", entryDate: "2026-09-02", exitDate: "2026-09-10", totalNights: 8, requiresUNClearance: true },
-    ],
+    countryStays: [stay("Democratic Republic of the Congo", "2026-09-02", "2026-09-10", 8, true)],
     comments: [],
     auditTrail: [
-      { id: "aud-009a", timestamp: "2026-06-01T08:00:00Z", actor: "Elena Vasquez", actorRole: "requestor", action: "Created", details: "Travel request created", ipAddress: "10.0.42.118" },
-      { id: "aud-009b", timestamp: "2026-06-03T14:00:00Z", actor: "Elena Vasquez", actorRole: "requestor", action: "Submitted", details: "Submitted for approval", ipAddress: "10.0.42.118" },
-      { id: "aud-009c", timestamp: "2026-06-04T09:00:00Z", actor: "Michael Chen", actorRole: "approver", action: "Approved", details: "Request approved", ipAddress: "10.0.42.88" },
-      { id: "aud-009d", timestamp: "2026-06-04T09:01:00Z", actor: "System", actorRole: "administrator", action: "Sent to UN", details: "CSV payload sent to UN Security", ipAddress: "10.0.0.1" },
+      audit("aud-009a", "2026-06-01T08:00:00Z", "Elena Vasquez", "requestor", "Created", "Travel request created", IP_VASQUEZ),
+      audit("aud-009b", "2026-06-03T14:00:00Z", "Elena Vasquez", "requestor", "Submitted", "Submitted for approval", IP_VASQUEZ),
+      audit("aud-009c", "2026-06-04T09:00:00Z", "Michael Chen", "approver", "Approved", "Request approved", IP_CHEN),
+      audit("aud-009d", "2026-06-04T09:01:00Z", "System", "administrator", "Sent to UN", "CSV payload sent to UN Security", IP_SYSTEM),
     ],
     validationIssues: [],
   },
@@ -571,102 +369,28 @@ export const travelRequests: TravelRequest[] = [
     updatedAt: "2026-06-05T10:00:00Z",
     internalNotes: "",
     itinerary: [
-      {
-        id: "leg-010a", legNumber: 1,
-        departureCity: "Paris", departureCountry: "France",
-        arrivalCity: "Berlin", arrivalCountry: "Germany",
-        departureDate: "2026-09-15", departureTime: "07:30",
-        arrivalDate: "2026-09-15", arrivalTime: "09:30",
-        modeOfTransport: "train", carrier: "Deutsche Bahn", flightNumber: "ICE 9551",
-        transportToAirport: "Metro", transportFromAirport: "S-Bahn",
-      },
-      {
-        id: "leg-010b", legNumber: 2,
-        departureCity: "Berlin", departureCountry: "Germany",
-        arrivalCity: "Paris", arrivalCountry: "France",
-        departureDate: "2026-09-19", departureTime: "16:00",
-        arrivalDate: "2026-09-19", arrivalTime: "18:00",
-        modeOfTransport: "train", carrier: "Deutsche Bahn", flightNumber: "ICE 9552",
-        transportToAirport: "S-Bahn", transportFromAirport: "Metro",
-      },
+      leg("leg-010a", 1, PARIS, ["Berlin", "Germany"], ["2026-09-15", "07:30"], ["2026-09-15", "09:30"], "train", "Deutsche Bahn", "ICE 9551", "Metro", "S-Bahn"),
+      leg("leg-010b", 2, ["Berlin", "Germany"], PARIS, ["2026-09-19", "16:00"], ["2026-09-19", "18:00"], "train", "Deutsche Bahn", "ICE 9552", "S-Bahn", "Metro"),
     ],
     accommodations: [],
-    countryStays: [
-      { country: "Germany", entryDate: "2026-09-15", exitDate: "2026-09-19", totalNights: 4, requiresUNClearance: false },
-    ],
+    countryStays: [stay("Germany", "2026-09-15", "2026-09-19", 4, false)],
     comments: [],
     auditTrail: [
-      { id: "aud-010a", timestamp: "2026-06-05T10:00:00Z", actor: "Sophie Laurent", actorRole: "requestor", action: "Created", details: "Travel request created as draft", ipAddress: "10.0.55.42" },
+      audit("aud-010a", "2026-06-05T10:00:00Z", "Sophie Laurent", "requestor", "Created", "Travel request created as draft", IP_LAURENT),
     ],
     validationIssues: [
-      { id: "val-010a", field: "accommodations", severity: "error", message: "No accommodation details provided for Berlin stay" },
-      { id: "val-010b", field: "internalNotes", severity: "warning", message: "Trip justification notes are empty" },
+      validation("val-010a", "accommodations", "error", "No accommodation details provided for Berlin stay"),
+      validation("val-010b", "internalNotes", "warning", "Trip justification notes are empty"),
     ],
   },
 ];
 
 export const initialEmails: SimulatedEmail[] = [
-  {
-    id: "email-001",
-    to: "kasante@imf.org",
-    subject: "Action Required: Your travel request TR-2026-00138 is pending approval",
-    body: "Your travel request to Addis Ababa, Ethiopia has been submitted and is awaiting approval from Michael Chen.",
-    timestamp: "2026-06-02T16:46:00Z",
-    deepLink: "/requests/req-002",
-    read: true,
-  },
-  {
-    id: "email-002",
-    to: "slaurent@imf.org",
-    subject: "Travel Request TR-2026-00135 Returned for Corrections",
-    body: "Your travel request to Tokyo, Japan has been returned by the approver with comments. Please review the feedback and resubmit. Comment from Michael Chen: 'Please clarify the purpose of 9 nights in Tokyo.'",
-    timestamp: "2026-06-03T10:31:00Z",
-    deepLink: "/requests/req-003",
-    read: false,
-  },
-  {
-    id: "email-003",
-    to: "rpatel@imf.org",
-    subject: "Travel Request TR-2026-00130 Approved",
-    body: "Your travel request to Lima, Peru has been approved by Sarah Williams. The request will now proceed through the clearance pipeline.",
-    timestamp: "2026-06-01T09:16:00Z",
-    deepLink: "/requests/req-004",
-    read: true,
-  },
-  {
-    id: "email-004",
-    to: "evasquez@imf.org",
-    subject: "UN Security Clearance: TR-2026-00128 Sent for Review",
-    body: "Your travel request to Kabul, Afghanistan has been sent to UN Department of Safety and Security for clearance review.",
-    timestamp: "2026-05-30T15:32:00Z",
-    deepLink: "/requests/req-005/clearance",
-    read: true,
-  },
-  {
-    id: "email-005",
-    to: "kasante@imf.org",
-    subject: "UN Security Clearance Granted: TR-2026-00125",
-    body: "Your travel request to Maputo, Mozambique has received UN security clearance. Reference: UNDSS-2026-MZ-04821. Please proceed with final travel preparations.",
-    timestamp: "2026-05-25T11:01:00Z",
-    deepLink: "/requests/req-006/clearance",
-    read: true,
-  },
-  {
-    id: "email-006",
-    to: "slaurent@imf.org",
-    subject: "URGENT: UN Security Clearance Denied — TR-2026-00120",
-    body: "Your travel request to Bangui, Central African Republic has been denied by UN DSS. Reference: UNDSS-2026-CF-03192. Reason: Current security situation does not permit non-essential travel.",
-    timestamp: "2026-05-28T14:01:00Z",
-    deepLink: "/requests/req-007/clearance",
-    read: false,
-  },
-  {
-    id: "email-007",
-    to: "rpatel@imf.org",
-    subject: "Action Required: UN Returned TR-2026-00145 for Corrections",
-    body: "Your travel request to Colombo, Sri Lanka has been returned by UN DSS for missing documentation. Please provide the requested documents and resubmit.",
-    timestamp: "2026-06-05T13:01:00Z",
-    deepLink: "/requests/req-008",
-    read: false,
-  },
+  { id: "email-001", to: "kasante@imf.org", subject: "Action Required: Your travel request TR-2026-00138 is pending approval", body: "Your travel request to Addis Ababa, Ethiopia has been submitted and is awaiting approval from Michael Chen.", timestamp: "2026-06-02T16:46:00Z", deepLink: "/requests/req-002", read: true },
+  { id: "email-002", to: "slaurent@imf.org", subject: "Travel Request TR-2026-00135 Returned for Corrections", body: "Your travel request to Tokyo, Japan has been returned by the approver with comments. Please review the feedback and resubmit. Comment from Michael Chen: 'Please clarify the purpose of 9 nights in Tokyo.'", timestamp: "2026-06-03T10:31:00Z", deepLink: "/requests/req-003", read: false },
+  { id: "email-003", to: "rpatel@imf.org", subject: "Travel Request TR-2026-00130 Approved", body: "Your travel request to Lima, Peru has been approved by Sarah Williams. The request will now proceed through the clearance pipeline.", timestamp: "2026-06-01T09:16:00Z", deepLink: "/requests/req-004", read: true },
+  { id: "email-004", to: "evasquez@imf.org", subject: "UN Security Clearance: TR-2026-00128 Sent for Review", body: "Your travel request to Kabul, Afghanistan has been sent to UN Department of Safety and Security for clearance review.", timestamp: "2026-05-30T15:32:00Z", deepLink: "/requests/req-005/clearance", read: true },
+  { id: "email-005", to: "kasante@imf.org", subject: "UN Security Clearance Granted: TR-2026-00125", body: "Your travel request to Maputo, Mozambique has received UN security clearance. Reference: UNDSS-2026-MZ-04821. Please proceed with final travel preparations.", timestamp: "2026-05-25T11:01:00Z", deepLink: "/requests/req-006/clearance", read: true },
+  { id: "email-006", to: "slaurent@imf.org", subject: "URGENT: UN Security Clearance Denied — TR-2026-00120", body: "Your travel request to Bangui, Central African Republic has been denied by UN DSS. Reference: UNDSS-2026-CF-03192. Reason: Current security situation does not permit non-essential travel.", timestamp: "2026-05-28T14:01:00Z", deepLink: "/requests/req-007/clearance", read: false },
+  { id: "email-007", to: "rpatel@imf.org", subject: "Action Required: UN Returned TR-2026-00145 for Corrections", body: "Your travel request to Colombo, Sri Lanka has been returned by UN DSS for missing documentation. Please provide the requested documents and resubmit.", timestamp: "2026-06-05T13:01:00Z", deepLink: "/requests/req-008", read: false },
 ];
