@@ -124,6 +124,41 @@ export interface WorkflowConfig {
   allowReworkOnRejection: boolean;
 }
 
+export type SortOption =
+  | "updated_newest"
+  | "updated_oldest"
+  | "travel_date_soonest"
+  | "travel_date_latest"
+  | "req_number_asc"
+  | "req_number_desc";
+
+export interface AdvancedFilters {
+  statuses: TravelRequestStatus[];
+  destination: string | null;
+  dateFrom: string | null;
+  dateTo: string | null;
+  approver: string | null;
+  sortBy: SortOption;
+}
+
+export const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: "updated_newest", label: "Last Updated (newest)" },
+  { value: "updated_oldest", label: "Last Updated (oldest)" },
+  { value: "travel_date_soonest", label: "Travel Date (soonest)" },
+  { value: "travel_date_latest", label: "Travel Date (latest)" },
+  { value: "req_number_asc", label: "Requisition # (ascending)" },
+  { value: "req_number_desc", label: "Requisition # (descending)" },
+];
+
+export const DEFAULT_FILTERS: AdvancedFilters = {
+  statuses: [],
+  destination: null,
+  dateFrom: null,
+  dateTo: null,
+  approver: null,
+  sortBy: "updated_newest",
+};
+
 export const STATUS_LABELS: Record<TravelRequestStatus, string> = {
   draft: "Draft",
   pending_approval: "Pending Approval",

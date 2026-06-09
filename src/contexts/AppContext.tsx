@@ -9,7 +9,9 @@ import type {
   WorkflowConfig,
   Comment,
   AuditEntry,
+  AdvancedFilters,
 } from "@/types";
+import { DEFAULT_FILTERS } from "@/types";
 import { travelRequests as seedRequests, initialEmails, defaultWorkflowConfig } from "@/data/seed";
 
 interface AppContextType {
@@ -40,6 +42,10 @@ interface AppContextType {
     response: "approved" | "rejected" | "returned"
   ) => void;
   createNewRequest: () => TravelRequest;
+  filters: AdvancedFilters;
+  setFilters: (filters: AdvancedFilters) => void;
+  showFiltersButton: boolean;
+  setShowFiltersButton: (show: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -52,6 +58,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     useState<WorkflowConfig>(defaultWorkflowConfig);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [emailPanelOpen, setEmailPanelOpen] = useState(false);
+  const [filters, setFilters] = useState<AdvancedFilters>(DEFAULT_FILTERS);
+  const [showFiltersButton, setShowFiltersButton] = useState(false);
 
   const unreadEmailCount = emails.filter((e) => !e.read).length;
 
@@ -306,6 +314,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         markEmailRead,
         simulateUNResponse,
         createNewRequest,
+        filters,
+        setFilters,
+        showFiltersButton,
+        setShowFiltersButton,
       }}
     >
       {children}

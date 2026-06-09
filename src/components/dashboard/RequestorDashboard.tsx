@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Search, Filter } from "lucide-react";
 import { useApp } from "@/contexts/AppContext";
@@ -8,6 +8,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RequestTable } from "@/components/shared/RequestTable";
+import { ActiveFilterPills } from "@/components/shared/ActiveFilterPills";
+import { applyAdvancedFilters } from "@/lib/filterRequests";
 import type { ColumnKey } from "@/components/shared/RequestTable";
 import type { TravelRequestStatus } from "@/types";
 import { STATUS_LABELS } from "@/types";
@@ -34,36 +36,27 @@ const tableColumns: { key: ColumnKey; label: string }[] = [
 ];
 
 export function RequestorDashboard() {
-  const { requests, createNewRequest } = useApp();
+  const { requests, createNewRequest, filters, setShowFiltersButton } = useApp();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<TravelRequestStatus | "all">(
-    "all"
-  );
   const [loading] = useState(false);
+
+  useEffect(() => {
+    setShowFiltersButton(true);
+    return () => setShowFiltersButton(false);
+  }, [setShowFiltersButton]);
+
+  const filteredRequests = useMemo(() => {
+    return applyAdvancedFilters(requests, filters, searchQuery);
+  }, [requests, filters, searchQuery]);
 
   const statusCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const s of statusGroups) {
-      counts[s.key] = requests.filter((r) => r.status === s.key).length;
+      counts[s.key] = filteredRequests.filter((r) => r.status === s.key).length;
     }
     return counts;
-  }, [requests]);
-
-  const filteredRequests = useMemo(() => {
-    return requests.filter((r) => {
-      if (statusFilter !== "all" && r.status !== statusFilter) return false;
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        return (
-          r.travelReqNumber.toLowerCase().includes(q) ||
-          r.primaryDestination.toLowerCase().includes(q) ||
-          r.traveler.name.toLowerCase().includes(q)
-        );
-      }
-      return true;
-    });
-  }, [requests, statusFilter, searchQuery]);
+  }, [filteredRequests]);
 
   const handleNewRequest = () => {
     const newReq = createNewRequest();
@@ -102,16 +95,9 @@ export function RequestorDashboard() {
       {/* Status summary cards */}
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9">
         {statusGroups.map((s) => (
-          <button
+          <div
             key={s.key}
-            onClick={() =>
-              setStatusFilter(statusFilter === s.key ? "all" : s.key)
-            }
-            className={`rounded-lg border p-3 text-left transition-all hover:shadow-sm ${
-              statusFilter === s.key
-                ? "border-[#0073CF] bg-blue-50 ring-1 ring-[#0073CF]"
-                : "border-gray-200 bg-white"
-            }`}
+            className="rounded-lg border border-gray-200 bg-white p-3 text-left"
           >
             <div className="flex items-center gap-2">
               <div className={`h-2 w-2 rounded-full ${s.color}`} />
@@ -122,9 +108,12 @@ export function RequestorDashboard() {
             <p className="mt-1 text-xl font-semibold text-gray-900">
               {statusCounts[s.key] || 0}
             </p>
-          </button>
+          </div>
         ))}
       </div>
+
+      {/* Active filter pills */}
+      <ActiveFilterPills />
 
       {/* Filter bar */}
       <Card className="mb-4">
@@ -139,15 +128,6 @@ export function RequestorDashboard() {
               aria-label="Search travel requests"
             />
           </div>
-          {statusFilter !== "all" && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setStatusFilter("all")}
-            >
-              Clear filter
-            </Button>
-          )}
         </CardContent>
       </Card>
 
