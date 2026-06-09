@@ -1,12 +1,14 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { ClipboardCheck, Clock, AlertCircle } from "lucide-react";
 import { useApp } from "@/contexts/AppContext";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StatCard } from "@/components/shared/StatCard";
 import { RequestTable } from "@/components/shared/RequestTable";
+import { ActiveFilterPills } from "@/components/shared/ActiveFilterPills";
+import { applyAdvancedFilters } from "@/lib/filterRequests";
 import type { ColumnKey } from "@/components/shared/RequestTable";
 
 const pendingColumns: { key: ColumnKey; label: string }[] = [
@@ -27,23 +29,27 @@ const decisionsColumns: { key: ColumnKey; label: string }[] = [
 ];
 
 export function ApproverDashboard() {
-  const { requests } = useApp();
+  const { requests, filters, setShowFiltersButton } = useApp();
 
-  const pendingRequests = useMemo(
-    () => requests.filter((r) => r.status === "pending_approval"),
-    [requests]
-  );
+  useEffect(() => {
+    setShowFiltersButton(true);
+    return () => setShowFiltersButton(false);
+  }, [setShowFiltersButton]);
 
-  const recentDecisions = useMemo(
-    () =>
-      requests.filter(
-        (r) =>
-          r.status === "approved" ||
-          r.status === "returned_by_approver" ||
-          r.status === "sent_to_un"
-      ),
-    [requests]
-  );
+  const pendingRequests = useMemo(() => {
+    const pending = requests.filter((r) => r.status === "pending_approval");
+    return applyAdvancedFilters(pending, filters);
+  }, [requests, filters]);
+
+  const recentDecisions = useMemo(() => {
+    const decisions = requests.filter(
+      (r) =>
+        r.status === "approved" ||
+        r.status === "returned_by_approver" ||
+        r.status === "sent_to_un"
+    );
+    return applyAdvancedFilters(decisions, filters);
+  }, [requests, filters]);
 
   return (
     <div className="animate-in fade-in duration-300">
@@ -78,6 +84,9 @@ export function ApproverDashboard() {
           value={1}
         />
       </div>
+
+      {/* Active filter pills */}
+      <ActiveFilterPills />
 
       {/* Pending Requests */}
       <div className="mb-6">

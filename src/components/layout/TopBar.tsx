@@ -1,6 +1,7 @@
 "use client";
 
-import { Bell, Search, ChevronDown, Mail } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Bell, Search, ChevronDown, Mail, SlidersHorizontal } from "lucide-react";
 import { useApp } from "@/contexts/AppContext";
 import {
   DropdownMenu,
@@ -11,7 +12,9 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import type { UserRole } from "@/types";
+import { AdvancedFiltersPanel } from "@/components/shared/AdvancedFiltersPanel";
+import { countActiveFilters } from "@/components/shared/ActiveFilterPills";
+import type { UserRole, AdvancedFilters } from "@/types";
 import { cn } from "@/lib/utils";
 
 const roleLabels: Record<UserRole, { label: string; color: string }> = {
@@ -30,7 +33,43 @@ export function TopBar() {
     sidebarCollapsed,
     unreadEmailCount,
     setEmailPanelOpen,
+    filters,
+    setFilters,
+    showFiltersButton,
   } = useApp();
+
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  const activeCount = countActiveFilters(filters);
+  const hasActiveFilters = activeCount > 0;
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        panelRef.current &&
+        !panelRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setFiltersOpen(false);
+      }
+    }
+    if (filtersOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [filtersOpen]);
+
+  const handleApply = (newFilters: AdvancedFilters) => {
+    setFilters(newFilters);
+    setFiltersOpen(false);
+  };
+
+  const handleCancel = () => {
+    setFiltersOpen(false);
+  };
 
   return (
     <header
@@ -40,8 +79,8 @@ export function TopBar() {
         "right-0"
       )}
     >
-      {/* Left: Breadcrumbs / Search */}
-      <div className="flex items-center gap-4">
+      {/* Left: Search + Filters */}
+      <div className="flex items-center gap-3">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
@@ -50,6 +89,42 @@ export function TopBar() {
             aria-label="Search requests"
           />
         </div>
+
+        {showFiltersButton && (
+          <div className="relative">
+            <button
+              ref={buttonRef}
+              onClick={() => setFiltersOpen((prev) => !prev)}
+              className={cn(
+                "flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors",
+                hasActiveFilters
+                  ? "border-[#2563EB] bg-[#EEF2FF] text-[#2563EB]"
+                  : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+              )}
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+              Filters
+              {hasActiveFilters && (
+                <span className="ml-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#2563EB] text-[10px] font-bold text-white">
+                  {activeCount}
+                </span>
+              )}
+            </button>
+
+            {filtersOpen && (
+              <div
+                ref={panelRef}
+                className="absolute left-0 top-full z-50 mt-2"
+              >
+                <AdvancedFiltersPanel
+                  currentFilters={filters}
+                  onApply={handleApply}
+                  onCancel={handleCancel}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Right: Actions */}
