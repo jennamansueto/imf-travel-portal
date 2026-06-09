@@ -83,7 +83,7 @@ export async function GET(request: Request) {
       countryStay ? String(countryStay.totalNights) : "",
       countryStay ? (countryStay.requiresUNClearance ? "Yes" : "No") : "",
     ]
-      .map((v) => `"${v}"`)
+      .map((v) => `"${v.replace(/"/g, '""')}"`)
       .join(",");
   });
 

@@ -9,25 +9,15 @@ import {
   Shield,
   LayoutGrid,
   List,
-  MapPin,
-  Calendar,
 } from "lucide-react";
 import { useApp } from "@/contexts/AppContext";
-import { StatusBadge } from "@/components/shared/StatusBadge";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { StatCard } from "@/components/shared/StatCard";
+import { RequestTable } from "@/components/shared/RequestTable";
+import type { ColumnKey } from "@/components/shared/RequestTable";
 import type { TravelRequestStatus } from "@/types";
 import { STATUS_LABELS } from "@/types";
-import { format } from "date-fns";
 
 const kanbanColumns: TravelRequestStatus[] = [
   "draft",
@@ -39,6 +29,17 @@ const kanbanColumns: TravelRequestStatus[] = [
   "un_approved",
   "un_rejected",
   "returned_by_un",
+];
+
+const tableColumns: { key: ColumnKey; label: string }[] = [
+  { key: "travelReqNumber", label: "Travel Req #" },
+  { key: "traveler", label: "Traveler" },
+  { key: "department", label: "Department" },
+  { key: "destination", label: "Destination" },
+  { key: "dates", label: "Dates" },
+  { key: "status", label: "Status" },
+  { key: "approver", label: "Approver" },
+  { key: "updated", label: "Updated" },
 ];
 
 export function AdminDashboard() {
@@ -97,52 +98,34 @@ export function AdminDashboard() {
 
       {/* Metrics row */}
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-4">
-        <Card>
-          <CardContent className="flex items-center gap-4 py-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-50">
-              <BarChart3 className="h-6 w-6 text-blue-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Total Requests</p>
-              <p className="text-2xl font-semibold">{metrics.total}</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 py-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-50">
-              <Clock className="h-6 w-6 text-amber-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Pending Approval</p>
-              <p className="text-2xl font-semibold">{metrics.pending}</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 py-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-50">
-              <AlertTriangle className="h-6 w-6 text-red-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">
-                Overdue (&gt;3 days)
-              </p>
-              <p className="text-2xl font-semibold">{metrics.overdue}</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 py-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-50">
-              <Shield className="h-6 w-6 text-indigo-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">UN Clearance Pending</p>
-              <p className="text-2xl font-semibold">{metrics.unPending}</p>
-            </div>
-          </CardContent>
-        </Card>
+        <StatCard
+          icon={BarChart3}
+          iconColor="text-blue-600"
+          iconBg="bg-blue-50"
+          label="Total Requests"
+          value={metrics.total}
+        />
+        <StatCard
+          icon={Clock}
+          iconColor="text-amber-600"
+          iconBg="bg-amber-50"
+          label="Pending Approval"
+          value={metrics.pending}
+        />
+        <StatCard
+          icon={AlertTriangle}
+          iconColor="text-red-600"
+          iconBg="bg-red-50"
+          label="Overdue (>3 days)"
+          value={metrics.overdue}
+        />
+        <StatCard
+          icon={Shield}
+          iconColor="text-indigo-600"
+          iconBg="bg-indigo-50"
+          label="UN Clearance Pending"
+          value={metrics.unPending}
+        />
       </div>
 
       {/* Kanban or Table view */}
@@ -192,68 +175,7 @@ export function AdminDashboard() {
           })}
         </div>
       ) : (
-        <Card>
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-slate-50">
-                <TableHead className="font-semibold text-gray-700">Travel Req #</TableHead>
-                <TableHead className="font-semibold text-gray-700">Traveler</TableHead>
-                <TableHead className="font-semibold text-gray-700">Department</TableHead>
-                <TableHead className="font-semibold text-gray-700">Destination</TableHead>
-                <TableHead className="font-semibold text-gray-700">Dates</TableHead>
-                <TableHead className="font-semibold text-gray-700">Status</TableHead>
-                <TableHead className="font-semibold text-gray-700">Approver</TableHead>
-                <TableHead className="font-semibold text-gray-700">Updated</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {requests.map((req) => (
-                <TableRow
-                  key={req.id}
-                  className="cursor-pointer hover:bg-slate-50/80 transition-colors"
-                  onClick={() => router.push(`/requests/${req.id}`)}
-                >
-                  <TableCell className="font-medium text-[#0073CF]">
-                    {req.travelReqNumber}
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{req.traveler.name}</p>
-                      <p className="text-xs text-gray-500">
-                        {req.traveler.employeeId}
-                      </p>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm text-gray-600">
-                    {req.traveler.department}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1.5">
-                      <MapPin className="h-3.5 w-3.5 text-gray-400" />
-                      {req.primaryDestination}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1.5 text-sm text-gray-600">
-                      <Calendar className="h-3.5 w-3.5 text-gray-400" />
-                      {req.startDate ? format(new Date(req.startDate), "MMM d") : "—"} –{" "}
-                      {req.endDate ? format(new Date(req.endDate), "MMM d") : "—"}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge status={req.status} />
-                  </TableCell>
-                  <TableCell className="text-sm text-gray-600">
-                    {req.approver}
-                  </TableCell>
-                  <TableCell className="text-sm text-gray-500">
-                    {format(new Date(req.updatedAt), "MMM d")}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Card>
+        <RequestTable requests={requests} columns={tableColumns} />
       )}
     </div>
   );

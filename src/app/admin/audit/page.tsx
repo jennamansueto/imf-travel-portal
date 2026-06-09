@@ -71,7 +71,7 @@ export default function AuditPage() {
       "Timestamp,Travel Req #,Actor,Role,Action,Details,IP Address",
       ...allAuditEntries.map(
         (e) =>
-          `"${e.timestamp}","${e.travelReqNumber}","${e.actor}","${e.actorRole}","${e.action}","${e.details}","${e.ipAddress}"`
+          `"${e.timestamp}","${e.travelReqNumber}","${e.actor}","${e.actorRole}","${e.action}","${e.details.replace(/"/g, '""')}","${e.ipAddress}"`
       ),
     ].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });

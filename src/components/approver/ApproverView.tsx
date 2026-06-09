@@ -101,6 +101,7 @@ export function ApproverView({ request }: { request: TravelRequest }) {
     });
     toast.info("Request returned to requestor");
     setRejectDialog(false);
+    setReturnDialog(false);
     setComment("");
   };
 

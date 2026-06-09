@@ -2,23 +2,15 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Search, Filter, Calendar, MapPin } from "lucide-react";
+import { Plus, Search, Filter } from "lucide-react";
 import { useApp } from "@/contexts/AppContext";
-import { StatusBadge } from "@/components/shared/StatusBadge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { RequestTable } from "@/components/shared/RequestTable";
+import type { ColumnKey } from "@/components/shared/RequestTable";
 import type { TravelRequestStatus } from "@/types";
 import { STATUS_LABELS } from "@/types";
-import { format } from "date-fns";
 
 const statusGroups: { key: TravelRequestStatus; color: string }[] = [
   { key: "draft", color: "bg-slate-500" },
@@ -30,6 +22,15 @@ const statusGroups: { key: TravelRequestStatus; color: string }[] = [
   { key: "un_approved", color: "bg-emerald-500" },
   { key: "un_rejected", color: "bg-red-500" },
   { key: "returned_by_un", color: "bg-orange-500" },
+];
+
+const tableColumns: { key: ColumnKey; label: string }[] = [
+  { key: "travelReqNumber", label: "Travel Req #" },
+  { key: "destination", label: "Destination" },
+  { key: "dates", label: "Dates" },
+  { key: "status", label: "Status" },
+  { key: "updated", label: "Last Updated" },
+  { key: "approver", label: "Approver" },
 ];
 
 export function RequestorDashboard() {
@@ -151,89 +152,21 @@ export function RequestorDashboard() {
       </Card>
 
       {/* Request table */}
-      <Card>
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-slate-50">
-              <TableHead className="font-semibold text-gray-700">
-                Travel Req #
-              </TableHead>
-              <TableHead className="font-semibold text-gray-700">
-                Destination
-              </TableHead>
-              <TableHead className="font-semibold text-gray-700">
-                Dates
-              </TableHead>
-              <TableHead className="font-semibold text-gray-700">
-                Status
-              </TableHead>
-              <TableHead className="font-semibold text-gray-700">
-                Last Updated
-              </TableHead>
-              <TableHead className="font-semibold text-gray-700">
-                Approver
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredRequests.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={6}
-                  className="py-12 text-center text-gray-500"
-                >
-                  <div className="flex flex-col items-center gap-2">
-                    <Filter className="h-8 w-8 text-gray-300" />
-                    <p className="font-medium">No requests found</p>
-                    <p className="text-sm">
-                      Try adjusting your filters or create a new request
-                    </p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredRequests.map((req) => (
-                <TableRow
-                  key={req.id}
-                  className="cursor-pointer hover:bg-slate-50/80 transition-colors"
-                  onClick={() => router.push(`/requests/${req.id}`)}
-                >
-                  <TableCell className="font-medium text-[#0073CF]">
-                    {req.travelReqNumber}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1.5">
-                      <MapPin className="h-3.5 w-3.5 text-gray-400" />
-                      {req.primaryDestination}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1.5 text-sm text-gray-600">
-                      <Calendar className="h-3.5 w-3.5 text-gray-400" />
-                      {req.startDate
-                        ? format(new Date(req.startDate), "MMM d")
-                        : "—"}{" "}
-                      –{" "}
-                      {req.endDate
-                        ? format(new Date(req.endDate), "MMM d, yyyy")
-                        : "—"}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge status={req.status} />
-                  </TableCell>
-                  <TableCell className="text-sm text-gray-500">
-                    {format(new Date(req.updatedAt), "MMM d, h:mm a")}
-                  </TableCell>
-                  <TableCell className="text-sm text-gray-600">
-                    {req.approver}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </Card>
+      {filteredRequests.length === 0 ? (
+        <Card>
+          <CardContent className="py-12 text-center text-gray-500">
+            <div className="flex flex-col items-center gap-2">
+              <Filter className="h-8 w-8 text-gray-300" />
+              <p className="font-medium">No requests found</p>
+              <p className="text-sm">
+                Try adjusting your filters or create a new request
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <RequestTable requests={filteredRequests} columns={tableColumns} />
+      )}
     </div>
   );
 }
