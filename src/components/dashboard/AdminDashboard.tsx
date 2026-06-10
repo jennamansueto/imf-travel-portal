@@ -79,7 +79,7 @@ export function AdminDashboard() {
             variant={viewMode === "table" ? "default" : "outline"}
             size="sm"
             onClick={() => setViewMode("table")}
-            className={viewMode === "table" ? "bg-[#002855]" : ""}
+            className={viewMode === "table" ? "bg-[#004C97]" : ""}
           >
             <List className="mr-1.5 h-4 w-4" />
             Table
@@ -88,7 +88,7 @@ export function AdminDashboard() {
             variant={viewMode === "kanban" ? "default" : "outline"}
             size="sm"
             onClick={() => setViewMode("kanban")}
-            className={viewMode === "kanban" ? "bg-[#002855]" : ""}
+            className={viewMode === "kanban" ? "bg-[#004C97]" : ""}
           >
             <LayoutGrid className="mr-1.5 h-4 w-4" />
             Pipeline
@@ -153,7 +153,7 @@ export function AdminDashboard() {
                       onClick={() => router.push(`/requests/${req.id}`)}
                       className="w-full rounded-md border border-gray-200 bg-white p-3 text-left shadow-sm transition-shadow hover:shadow-md"
                     >
-                      <p className="text-xs font-semibold text-[#0073CF]">
+                      <p className="text-xs font-semibold text-[#009CDE]">
                         {req.travelReqNumber}
                       </p>
                       <p className="mt-1 text-sm font-medium text-gray-900">

@@ -24,7 +24,7 @@ export function TravelerInfoCard({ traveler, locked = false }: TravelerInfoCardP
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <User className="h-5 w-5 text-[#002855]" />
+          <User className="h-5 w-5 text-[#004C97]" />
           Traveler Information
         </CardTitle>
       </CardHeader>

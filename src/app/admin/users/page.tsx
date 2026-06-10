@@ -76,7 +76,7 @@ export default function UsersPage() {
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-[#002855] text-xs text-white">
+                      <AvatarFallback className="bg-[#004C97] text-xs text-white">
                         {user.name
                           .split(" ")
                           .map((n) => n[0])

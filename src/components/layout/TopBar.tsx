@@ -68,7 +68,7 @@ export function TopBar() {
         >
           <Mail className="h-5 w-5" />
           {unreadEmailCount > 0 && (
-            <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+            <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#DA291C] text-[10px] font-bold text-white">
               {unreadEmailCount}
             </span>
           )}
@@ -80,7 +80,7 @@ export function TopBar() {
           aria-label="Notifications"
         >
           <Bell className="h-5 w-5" />
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#DA291C] text-[10px] font-bold text-white">
             3
           </span>
         </button>
@@ -123,7 +123,7 @@ export function TopBar() {
 
         {/* User Avatar */}
         <Avatar className="h-8 w-8">
-          <AvatarFallback className="bg-[#002855] text-xs text-white">
+          <AvatarFallback className="bg-[#004C97] text-xs text-white">
             EV
           </AvatarFallback>
         </Avatar>

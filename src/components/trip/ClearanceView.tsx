@@ -191,7 +191,7 @@ export function ClearanceView({ request }: { request: TravelRequest }) {
                           : isComplete
                             ? "border-green-500 bg-green-50"
                             : isCurrent
-                              ? "border-[#0073CF] bg-blue-50"
+                              ? "border-[#009CDE] bg-blue-50"
                               : "border-gray-300 bg-gray-50"
                       }`}
                     >
@@ -203,7 +203,7 @@ export function ClearanceView({ request }: { request: TravelRequest }) {
                         <Icon
                           className={`h-5 w-5 ${
                             isCurrent
-                              ? "text-[#0073CF]"
+                              ? "text-[#009CDE]"
                               : "text-gray-400"
                           }`}
                         />
@@ -212,7 +212,7 @@ export function ClearanceView({ request }: { request: TravelRequest }) {
                     <span
                       className={`mt-2 text-xs font-medium ${
                         isCurrent
-                          ? "text-[#0073CF]"
+                          ? "text-[#009CDE]"
                           : isComplete
                             ? "text-green-600"
                             : isFailed
@@ -247,7 +247,7 @@ export function ClearanceView({ request }: { request: TravelRequest }) {
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span className="flex items-center gap-2 text-lg">
-                <FileText className="h-5 w-5 text-[#002855]" />
+                <FileText className="h-5 w-5 text-[#004C97]" />
                 UN Payload Preview
               </span>
               <div className="flex gap-2">
@@ -255,7 +255,7 @@ export function ClearanceView({ request }: { request: TravelRequest }) {
                   variant={payloadFormat === "csv" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setPayloadFormat("csv")}
-                  className={payloadFormat === "csv" ? "bg-[#002855]" : ""}
+                  className={payloadFormat === "csv" ? "bg-[#004C97]" : ""}
                 >
                   CSV
                 </Button>
@@ -263,7 +263,7 @@ export function ClearanceView({ request }: { request: TravelRequest }) {
                   variant={payloadFormat === "json" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setPayloadFormat("json")}
-                  className={payloadFormat === "json" ? "bg-[#002855]" : ""}
+                  className={payloadFormat === "json" ? "bg-[#004C97]" : ""}
                 >
                   JSON
                 </Button>
@@ -291,7 +291,7 @@ export function ClearanceView({ request }: { request: TravelRequest }) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Shield className="h-5 w-5 text-[#002855]" />
+              <Shield className="h-5 w-5 text-[#004C97]" />
               UN Response
             </CardTitle>
           </CardHeader>
@@ -396,7 +396,7 @@ export function ClearanceView({ request }: { request: TravelRequest }) {
                 key={entry.id}
                 className="flex items-start gap-3 border-b border-gray-100 pb-3 last:border-0"
               >
-                <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#002855]" />
+                <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#004C97]" />
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
                     <p className="text-sm">

@@ -13,15 +13,15 @@ import type { TravelRequestStatus } from "@/types";
 import { STATUS_LABELS } from "@/types";
 
 const statusGroups: { key: TravelRequestStatus; color: string }[] = [
-  { key: "draft", color: "bg-slate-500" },
-  { key: "pending_approval", color: "bg-blue-500" },
-  { key: "returned_by_approver", color: "bg-amber-500" },
-  { key: "approved", color: "bg-green-500" },
-  { key: "sent_to_un", color: "bg-indigo-500" },
-  { key: "un_processing", color: "bg-purple-500" },
-  { key: "un_approved", color: "bg-emerald-500" },
-  { key: "un_rejected", color: "bg-red-500" },
-  { key: "returned_by_un", color: "bg-orange-500" },
+  { key: "draft", color: "bg-[#B1B3B3]" },
+  { key: "pending_approval", color: "bg-[#009CDE]" },
+  { key: "returned_by_approver", color: "bg-[#F2A900]" },
+  { key: "approved", color: "bg-[#78BE20]" },
+  { key: "sent_to_un", color: "bg-[#004C97]" },
+  { key: "un_processing", color: "bg-[#8031A7]" },
+  { key: "un_approved", color: "bg-[#658D1B]" },
+  { key: "un_rejected", color: "bg-[#DA291C]" },
+  { key: "returned_by_un", color: "bg-[#FF8200]" },
 ];
 
 const tableColumns: { key: ColumnKey; label: string }[] = [
@@ -84,7 +84,7 @@ export function RequestorDashboard() {
         </div>
         <Button
           onClick={handleNewRequest}
-          className="bg-[#002855] hover:bg-[#001a3a]"
+          className="bg-[#004C97] hover:bg-[#001E60]"
         >
           <Plus className="mr-2 h-4 w-4" />
           New Travel Request
@@ -92,12 +92,14 @@ export function RequestorDashboard() {
       </div>
 
       {/* Loading state for Fabric */}
-      {loading && (
-        <div className="mb-4 flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
-          <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
-          Loading from Fabric...
-        </div>
-      )}
+      <div aria-live="polite" aria-atomic="true">
+        {loading && (
+          <div role="status" className="mb-4 flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" aria-hidden="true" />
+            Loading from Fabric...
+          </div>
+        )}
+      </div>
 
       {/* Status summary cards */}
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9">
@@ -109,7 +111,7 @@ export function RequestorDashboard() {
             }
             className={`rounded-lg border p-3 text-left transition-all hover:shadow-sm ${
               statusFilter === s.key
-                ? "border-[#0073CF] bg-blue-50 ring-1 ring-[#0073CF]"
+                ? "border-[#009CDE] bg-blue-50 ring-1 ring-[#009CDE]"
                 : "border-gray-200 bg-white"
             }`}
           >

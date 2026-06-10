@@ -7,6 +7,7 @@ export function MainContent({ children }: { children: React.ReactNode }) {
   const { sidebarCollapsed } = useApp();
   return (
     <main
+      id="main-content"
       className={cn(
         "min-h-screen pt-16 transition-all duration-200",
         sidebarCollapsed ? "pl-16" : "pl-[260px]"

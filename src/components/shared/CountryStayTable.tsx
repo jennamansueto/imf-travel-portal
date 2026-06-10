@@ -25,7 +25,7 @@ export function CountryStayTable({ countryStays, dateFormat = "MMM d, yyyy" }: C
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Globe className="h-5 w-5 text-[#002855]" />
+            <Globe className="h-5 w-5 text-[#004C97]" />
             Country Stay Summary
           </CardTitle>
         </CardHeader>
@@ -42,7 +42,7 @@ export function CountryStayTable({ countryStays, dateFormat = "MMM d, yyyy" }: C
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Globe className="h-5 w-5 text-[#002855]" />
+          <Globe className="h-5 w-5 text-[#004C97]" />
           Country Stay Summary
         </CardTitle>
       </CardHeader>

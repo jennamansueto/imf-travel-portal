@@ -24,7 +24,7 @@ export function AccommodationsTable({ accommodations, showConfirmation = false }
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Hotel className="h-5 w-5 text-[#002855]" />
+            <Hotel className="h-5 w-5 text-[#004C97]" />
             Accommodations
           </CardTitle>
         </CardHeader>
@@ -42,7 +42,7 @@ export function AccommodationsTable({ accommodations, showConfirmation = false }
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Hotel className="h-5 w-5 text-[#002855]" />
+          <Hotel className="h-5 w-5 text-[#004C97]" />
           Accommodations
         </CardTitle>
       </CardHeader>

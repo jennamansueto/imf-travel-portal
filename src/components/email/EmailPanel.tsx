@@ -67,7 +67,7 @@ export function EmailPanel() {
                     markEmailRead(email.id);
                     setEmailPanelOpen(false);
                   }}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-[#0073CF] hover:underline"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-[#009CDE] hover:underline"
                 >
                   <ExternalLink className="h-3 w-3" />
                   Open in portal

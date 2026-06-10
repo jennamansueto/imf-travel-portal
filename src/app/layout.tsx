@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/contexts/AppContext";
 import { Sidebar } from "@/components/layout/Sidebar";
@@ -9,11 +8,6 @@ import { EmailFab } from "@/components/email/EmailFab";
 import { MainContent } from "@/components/layout/MainContent";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
-
-const inter = Inter({
-  variable: "--font-sans",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "IMF Travel Portal",
@@ -27,8 +21,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html lang="en" className="h-full antialiased">
       <body className="min-h-full bg-[#F8FAFC] font-sans">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-[#004C97] focus:px-4 focus:py-2 focus:text-white focus:outline-none"
+        >
+          Skip to main content
+        </a>
         <AppProvider>
           <TooltipProvider>
             <Sidebar />

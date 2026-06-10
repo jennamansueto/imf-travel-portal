@@ -16,7 +16,7 @@ export default function NewRequestPage() {
   return (
     <div className="flex items-center justify-center py-20">
       <div className="flex items-center gap-2 text-gray-500">
-        <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#002855] border-t-transparent" />
+        <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#004C97] border-t-transparent" />
         Creating new travel request...
       </div>
     </div>
