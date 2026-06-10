@@ -75,7 +75,7 @@ export default function ClearancePage() {
                   className="cursor-pointer hover:bg-slate-50/80 transition-colors"
                   onClick={() => router.push(`/requests/${req.id}/clearance`)}
                 >
-                  <TableCell className="font-medium text-[#0073CF]">
+                  <TableCell className="font-medium text-[#004C97]">
                     {req.travelReqNumber}
                   </TableCell>
                   <TableCell>{req.traveler.name}</TableCell>

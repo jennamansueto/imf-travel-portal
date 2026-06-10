@@ -137,13 +137,13 @@ export const STATUS_LABELS: Record<TravelRequestStatus, string> = {
 };
 
 export const STATUS_COLORS: Record<TravelRequestStatus, { bg: string; text: string; border: string }> = {
-  draft: { bg: "bg-slate-100", text: "text-slate-700", border: "border-slate-300" },
-  pending_approval: { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-300" },
-  returned_by_approver: { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-300" },
-  approved: { bg: "bg-green-50", text: "text-green-700", border: "border-green-300" },
-  sent_to_un: { bg: "bg-indigo-50", text: "text-indigo-700", border: "border-indigo-300" },
-  un_processing: { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-300" },
-  un_approved: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-300" },
-  un_rejected: { bg: "bg-red-50", text: "text-red-700", border: "border-red-300" },
-  returned_by_un: { bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-300" },
+  draft: { bg: "bg-[#B1B3B3]/15", text: "text-[#707372]", border: "border-[#B1B3B3]" },
+  pending_approval: { bg: "bg-[#009CDE]/10", text: "text-[#004C97]", border: "border-[#009CDE]" },
+  returned_by_approver: { bg: "bg-[#F2A900]/10", text: "text-[#6E6259]", border: "border-[#F2A900]" },
+  approved: { bg: "bg-[#78BE20]/10", text: "text-[#658D1B]", border: "border-[#78BE20]" },
+  sent_to_un: { bg: "bg-[#004C97]/10", text: "text-[#004C97]", border: "border-[#004C97]" },
+  un_processing: { bg: "bg-[#8031A7]/10", text: "text-[#8031A7]", border: "border-[#8031A7]" },
+  un_approved: { bg: "bg-[#78BE20]/15", text: "text-[#658D1B]", border: "border-[#658D1B]" },
+  un_rejected: { bg: "bg-[#DA291C]/10", text: "text-[#DA291C]", border: "border-[#DA291C]" },
+  returned_by_un: { bg: "bg-[#FF8200]/10", text: "text-[#E35205]", border: "border-[#FF8200]" },
 };

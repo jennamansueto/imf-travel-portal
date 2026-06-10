@@ -189,7 +189,7 @@ export function TripDetail({ request }: { request: TravelRequest }) {
               </Button>
               <Button
                 onClick={handleSubmit}
-                className="bg-[#002855] hover:bg-[#001a3a]"
+                className="bg-[#004C97] hover:bg-[#001E60]"
                 disabled={hasErrors}
               >
                 <Send className="mr-2 h-4 w-4" />
@@ -257,7 +257,7 @@ export function TripDetail({ request }: { request: TravelRequest }) {
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span className="flex items-center gap-2 text-lg">
-                  <Plane className="h-5 w-5 text-[#002855]" />
+                  <Plane className="h-5 w-5 text-[#004C97]" />
                   Itinerary
                   <Badge variant="secondary">{request.itinerary.length} legs</Badge>
                 </span>
@@ -289,7 +289,7 @@ export function TripDetail({ request }: { request: TravelRequest }) {
                     >
                       <div className="mb-3 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#002855] text-xs font-bold text-white">
+                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#004C97] text-xs font-bold text-white">
                             {leg.legNumber}
                           </span>
                           <span className="text-sm font-semibold text-gray-700">
@@ -313,9 +313,10 @@ export function TripDetail({ request }: { request: TravelRequest }) {
 
                       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                         <div>
-                          <Label className="text-xs text-gray-500">From</Label>
+                          <Label htmlFor={`leg-${leg.id}-from`} className="text-xs text-gray-500">From</Label>
                           {isEditable ? (
                             <Input
+                              id={`leg-${leg.id}-from`}
                               defaultValue={`${leg.departureCity}, ${leg.departureCountry}`}
                               className="mt-1 text-sm"
                             />
@@ -327,9 +328,10 @@ export function TripDetail({ request }: { request: TravelRequest }) {
                           )}
                         </div>
                         <div>
-                          <Label className="text-xs text-gray-500">To</Label>
+                          <Label htmlFor={`leg-${leg.id}-to`} className="text-xs text-gray-500">To</Label>
                           {isEditable ? (
                             <Input
+                              id={`leg-${leg.id}-to`}
                               defaultValue={`${leg.arrivalCity}, ${leg.arrivalCountry}`}
                               className="mt-1 text-sm"
                             />
@@ -382,7 +384,7 @@ export function TripDetail({ request }: { request: TravelRequest }) {
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span className="flex items-center gap-2 text-lg">
-                  <Hotel className="h-5 w-5 text-[#002855]" />
+                  <Hotel className="h-5 w-5 text-[#004C97]" />
                   Accommodations
                 </span>
                 {isEditable && (
@@ -446,13 +448,15 @@ export function TripDetail({ request }: { request: TravelRequest }) {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <MessageSquare className="h-5 w-5 text-[#002855]" />
+                <MessageSquare className="h-5 w-5 text-[#004C97]" />
                 Internal Notes
               </CardTitle>
             </CardHeader>
             <CardContent>
               {isEditable ? (
                 <Textarea
+                  id="internal-notes"
+                  aria-label="Internal notes"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Add trip justification, meeting details, or other notes..."
@@ -545,7 +549,7 @@ export function TripDetail({ request }: { request: TravelRequest }) {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
-                  <MessageSquare className="h-5 w-5 text-[#002855]" />
+                  <MessageSquare className="h-5 w-5 text-[#004C97]" />
                   Comments
                 </CardTitle>
               </CardHeader>
@@ -579,7 +583,7 @@ export function TripDetail({ request }: { request: TravelRequest }) {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <Clock className="h-5 w-5 text-[#002855]" />
+                <Clock className="h-5 w-5 text-[#004C97]" />
                 Activity
               </CardTitle>
             </CardHeader>
@@ -625,7 +629,7 @@ export function TripDetail({ request }: { request: TravelRequest }) {
             </Button>
             <Button
               onClick={confirmSubmit}
-              className="bg-[#002855] hover:bg-[#001a3a]"
+              className="bg-[#004C97] hover:bg-[#001E60]"
             >
               <Send className="mr-2 h-4 w-4" />
               Submit

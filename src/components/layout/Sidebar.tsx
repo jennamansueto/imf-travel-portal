@@ -41,12 +41,12 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 z-40 flex h-full flex-col border-r border-[#001a3a] bg-[#002855] text-white transition-all duration-200",
+        "fixed left-0 top-0 z-40 flex h-full flex-col border-r border-[#001E60] bg-[#004C97] text-white transition-all duration-200",
         sidebarCollapsed ? "w-16" : "w-[260px]"
       )}
     >
       {/* Logo */}
-      <div className="flex h-16 items-center gap-3 border-b border-[#001a3a] px-4">
+      <div className="flex h-16 items-center gap-3 border-b border-[#001E60] px-4">
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-white/10 font-bold text-white">
           IMF
         </div>
@@ -113,7 +113,7 @@ export function Sidebar() {
       {/* Collapse toggle */}
       <button
         onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-        className="flex h-12 items-center justify-center border-t border-[#001a3a] text-blue-300 hover:bg-white/10 hover:text-white"
+        className="flex h-12 items-center justify-center border-t border-[#001E60] text-blue-300 hover:bg-white/10 hover:text-white"
         aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
         {sidebarCollapsed ? (

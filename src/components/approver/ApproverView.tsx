@@ -142,7 +142,7 @@ export function ApproverView({ request }: { request: TravelRequest }) {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <Plane className="h-5 w-5 text-[#002855]" />
+                <Plane className="h-5 w-5 text-[#004C97]" />
                 Itinerary
                 <Badge variant="secondary">{request.itinerary.length} legs</Badge>
               </CardTitle>
@@ -152,7 +152,7 @@ export function ApproverView({ request }: { request: TravelRequest }) {
                 {request.itinerary.map((leg) => (
                   <div key={leg.id} className="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
                     <div className="mb-3 flex items-center gap-2">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#002855] text-xs font-bold text-white">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#004C97] text-xs font-bold text-white">
                         {leg.legNumber}
                       </span>
                       <span className="text-sm font-semibold text-gray-700">
@@ -197,7 +197,7 @@ export function ApproverView({ request }: { request: TravelRequest }) {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
-                  <MessageSquare className="h-5 w-5 text-[#002855]" />
+                  <MessageSquare className="h-5 w-5 text-[#004C97]" />
                   Requestor Notes
                 </CardTitle>
               </CardHeader>
@@ -212,12 +212,14 @@ export function ApproverView({ request }: { request: TravelRequest }) {
         <div className="space-y-6">
           {/* Action Panel */}
           {isPending && (
-            <Card className="border-2 border-[#002855]">
+            <Card className="border-2 border-[#004C97]">
               <CardHeader>
                 <CardTitle className="text-lg">Decision</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
+                <Label htmlFor="approver-comment" className="sr-only">Decision comment</Label>
                 <Textarea
+                  id="approver-comment"
                   placeholder="Add a comment (required for reject/return)..."
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
@@ -225,7 +227,7 @@ export function ApproverView({ request }: { request: TravelRequest }) {
                 />
                 <Button
                   onClick={() => setApproveDialog(true)}
-                  className="w-full bg-green-600 hover:bg-green-700"
+                  className="w-full bg-[#658D1B] hover:bg-[#658D1B]/90"
                 >
                   <CheckCircle2 className="mr-2 h-4 w-4" />
                   Approve
@@ -254,7 +256,7 @@ export function ApproverView({ request }: { request: TravelRequest }) {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <Clock className="h-5 w-5 text-[#002855]" />
+                <Clock className="h-5 w-5 text-[#004C97]" />
                 Decision History
               </CardTitle>
             </CardHeader>
@@ -323,7 +325,7 @@ export function ApproverView({ request }: { request: TravelRequest }) {
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setApproveDialog(false)}>Cancel</Button>
-            <Button onClick={handleApprove} className="bg-green-600 hover:bg-green-700">
+            <Button onClick={handleApprove} className="bg-[#658D1B] hover:bg-[#658D1B]/90">
               <CheckCircle2 className="mr-2 h-4 w-4" />
               Confirm Approval
             </Button>

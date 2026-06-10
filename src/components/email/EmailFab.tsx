@@ -11,13 +11,13 @@ export function EmailFab() {
   return (
     <button
       onClick={() => setEmailPanelOpen(true)}
-      className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-[#002855] px-4 py-3 text-sm font-medium text-white shadow-lg transition-transform hover:scale-105 hover:bg-[#001a3a]"
+      className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-[#004C97] px-4 py-3 text-sm font-medium text-white shadow-lg transition-transform hover:scale-105 hover:bg-[#001E60]"
       aria-label="Open email simulation panel"
     >
       <Mail className="h-4 w-4" />
-      <span>📧 Emails</span>
+      <span>Emails</span>
       {unreadEmailCount > 0 && (
-        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold">
+        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#DA291C] text-xs font-bold">
           {unreadEmailCount}
         </span>
       )}
