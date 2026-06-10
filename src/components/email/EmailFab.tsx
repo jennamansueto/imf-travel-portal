@@ -17,7 +17,7 @@ export function EmailFab() {
       <Mail className="h-4 w-4" />
       <span>Emails</span>
       {unreadEmailCount > 0 && (
-        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold">
+        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#DA291C] text-xs font-bold">
           {unreadEmailCount}
         </span>
       )}

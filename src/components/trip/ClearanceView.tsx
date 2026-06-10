@@ -354,7 +354,7 @@ export function ClearanceView({ request }: { request: TravelRequest }) {
                   <Button
                     size="sm"
                     onClick={() => handleSimulate("approved")}
-                    className="bg-green-600 hover:bg-green-700"
+                    className="bg-[#658D1B] hover:bg-[#658D1B]/90"
                   >
                     <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" />
                     Approve
