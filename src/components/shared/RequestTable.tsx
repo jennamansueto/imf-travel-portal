@@ -41,7 +41,7 @@ function CellContent({ column, req }: { column: ColumnKey; req: TravelRequest })
   switch (column) {
     case "travelReqNumber":
       return (
-        <span className="font-medium text-[#009CDE]">{req.travelReqNumber}</span>
+        <span className="font-medium text-[#004C97]">{req.travelReqNumber}</span>
       );
     case "traveler":
       return (
@@ -116,7 +116,7 @@ export function RequestTable({ requests, columns, emptyMessage = "No requests fo
                 key={req.id}
                 className="cursor-pointer hover:bg-slate-50/80 transition-colors focus-visible:bg-slate-50/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004C97]/50"
                 tabIndex={0}
-                role="link"
+                role="row"
                 aria-label={`View request ${req.travelReqNumber}`}
                 onClick={() => router.push(`/requests/${req.id}`)}
                 onKeyDown={(e) => {

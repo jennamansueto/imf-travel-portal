@@ -143,7 +143,7 @@ export default function AuditPage() {
                 <TableCell className="text-xs text-gray-500 whitespace-nowrap">
                   {format(new Date(entry.timestamp), "MMM d, yyyy HH:mm")}
                 </TableCell>
-                <TableCell className="font-medium text-[#009CDE]">
+                <TableCell className="font-medium text-[#004C97]">
                   {entry.travelReqNumber}
                 </TableCell>
                 <TableCell>

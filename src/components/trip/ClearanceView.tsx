@@ -203,7 +203,7 @@ export function ClearanceView({ request }: { request: TravelRequest }) {
                         <Icon
                           className={`h-5 w-5 ${
                             isCurrent
-                              ? "text-[#009CDE]"
+                              ? "text-[#004C97]"
                               : "text-gray-400"
                           }`}
                         />
@@ -212,7 +212,7 @@ export function ClearanceView({ request }: { request: TravelRequest }) {
                     <span
                       className={`mt-2 text-xs font-medium ${
                         isCurrent
-                          ? "text-[#009CDE]"
+                          ? "text-[#004C97]"
                           : isComplete
                             ? "text-green-600"
                             : isFailed

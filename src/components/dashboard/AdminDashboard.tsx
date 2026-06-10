@@ -153,7 +153,7 @@ export function AdminDashboard() {
                       onClick={() => router.push(`/requests/${req.id}`)}
                       className="w-full rounded-md border border-gray-200 bg-white p-3 text-left shadow-sm transition-shadow hover:shadow-md"
                     >
-                      <p className="text-xs font-semibold text-[#009CDE]">
+                      <p className="text-xs font-semibold text-[#004C97]">
                         {req.travelReqNumber}
                       </p>
                       <p className="mt-1 text-sm font-medium text-gray-900">
