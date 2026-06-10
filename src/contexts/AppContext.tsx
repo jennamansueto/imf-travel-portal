@@ -11,6 +11,7 @@ import type {
   AuditEntry,
 } from "@/types";
 import { travelRequests as seedRequests, initialEmails, defaultWorkflowConfig } from "@/data/seed";
+import { IP_VASQUEZ, IP_UNDSS } from "@/config/networkAddresses";
 
 interface AppContextType {
   role: UserRole;
@@ -105,7 +106,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
                 actorRole: role,
                 action: actionMap[newStatus],
                 details: comment || `Status changed to ${newStatus}`,
-                ipAddress: "10.0.42.118",
+                ipAddress: IP_VASQUEZ,
               },
             ],
           };
@@ -206,7 +207,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
                       ? "UN Rejected"
                       : "Returned by UN",
                 details: commentMap[response],
-                ipAddress: "192.168.1.1",
+                ipAddress: IP_UNDSS,
               },
             ],
             comments: [
@@ -275,7 +276,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           actorRole: "requestor",
           action: "Created",
           details: "Travel request created as draft",
-          ipAddress: "10.0.42.118",
+          ipAddress: IP_VASQUEZ,
         },
       ],
       validationIssues: [],
