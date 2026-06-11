@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Search, Filter } from "lucide-react";
 import { useApp } from "@/contexts/AppContext";
@@ -8,6 +8,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RequestTable } from "@/components/shared/RequestTable";
+import { FilterPills } from "@/components/filters/FilterPills";
+import { useFilteredRequests } from "@/hooks/useFilteredRequests";
 import type { ColumnKey } from "@/components/shared/RequestTable";
 import type { TravelRequestStatus } from "@/types";
 import { STATUS_LABELS } from "@/types";
@@ -34,7 +36,7 @@ const tableColumns: { key: ColumnKey; label: string }[] = [
 ];
 
 export function RequestorDashboard() {
-  const { requests, createNewRequest } = useApp();
+  const { requests, createNewRequest, setShowFilterButton, advancedFilters } = useApp();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<TravelRequestStatus | "all">(
@@ -42,16 +44,23 @@ export function RequestorDashboard() {
   );
   const [loading] = useState(false);
 
+  useEffect(() => {
+    setShowFilterButton(true);
+    return () => setShowFilterButton(false);
+  }, [setShowFilterButton]);
+
+  const advancedFiltered = useFilteredRequests(requests);
+
   const statusCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const s of statusGroups) {
-      counts[s.key] = requests.filter((r) => r.status === s.key).length;
+      counts[s.key] = advancedFiltered.filter((r) => r.status === s.key).length;
     }
     return counts;
-  }, [requests]);
+  }, [advancedFiltered]);
 
   const filteredRequests = useMemo(() => {
-    return requests.filter((r) => {
+    return advancedFiltered.filter((r) => {
       if (statusFilter !== "all" && r.status !== statusFilter) return false;
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
@@ -63,12 +72,19 @@ export function RequestorDashboard() {
       }
       return true;
     });
-  }, [requests, statusFilter, searchQuery]);
+  }, [advancedFiltered, statusFilter, searchQuery]);
 
   const handleNewRequest = () => {
     const newReq = createNewRequest();
     router.push(`/requests/${newReq.id}`);
   };
+
+  const hasAdvancedFilters =
+    advancedFilters.statuses.length > 0 ||
+    advancedFilters.destination !== "" ||
+    advancedFilters.approver !== "" ||
+    advancedFilters.dateFrom !== "" ||
+    advancedFilters.dateTo !== "";
 
   return (
     <div className="animate-in fade-in duration-300">
@@ -126,11 +142,14 @@ export function RequestorDashboard() {
         ))}
       </div>
 
+      {/* Active filter pills */}
+      {hasAdvancedFilters && <FilterPills />}
+
       {/* Filter bar */}
       <Card className="mb-4">
         <CardContent className="flex items-center gap-3 py-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" aria-hidden="true" />
             <Input
               placeholder="Search by requisition #, destination, or traveler..."
               value={searchQuery}
@@ -156,7 +175,7 @@ export function RequestorDashboard() {
         <Card>
           <CardContent className="py-12 text-center text-gray-500">
             <div className="flex flex-col items-center gap-2">
-              <Filter className="h-8 w-8 text-gray-300" />
+              <Filter className="h-8 w-8 text-gray-300" aria-hidden="true" />
               <p className="font-medium">No requests found</p>
               <p className="text-sm">
                 Try adjusting your filters or create a new request

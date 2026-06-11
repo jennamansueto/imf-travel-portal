@@ -1,12 +1,14 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { ClipboardCheck, Clock, AlertCircle } from "lucide-react";
 import { useApp } from "@/contexts/AppContext";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StatCard } from "@/components/shared/StatCard";
 import { RequestTable } from "@/components/shared/RequestTable";
+import { FilterPills } from "@/components/filters/FilterPills";
+import { useFilteredRequests } from "@/hooks/useFilteredRequests";
 import type { ColumnKey } from "@/components/shared/RequestTable";
 
 const pendingColumns: { key: ColumnKey; label: string }[] = [
@@ -27,23 +29,37 @@ const decisionsColumns: { key: ColumnKey; label: string }[] = [
 ];
 
 export function ApproverDashboard() {
-  const { requests } = useApp();
+  const { requests, setShowFilterButton, advancedFilters } = useApp();
+
+  useEffect(() => {
+    setShowFilterButton(true);
+    return () => setShowFilterButton(false);
+  }, [setShowFilterButton]);
+
+  const advancedFiltered = useFilteredRequests(requests);
 
   const pendingRequests = useMemo(
-    () => requests.filter((r) => r.status === "pending_approval"),
-    [requests]
+    () => advancedFiltered.filter((r) => r.status === "pending_approval"),
+    [advancedFiltered]
   );
 
   const recentDecisions = useMemo(
     () =>
-      requests.filter(
+      advancedFiltered.filter(
         (r) =>
           r.status === "approved" ||
           r.status === "returned_by_approver" ||
           r.status === "sent_to_un"
       ),
-    [requests]
+    [advancedFiltered]
   );
+
+  const hasAdvancedFilters =
+    advancedFilters.statuses.length > 0 ||
+    advancedFilters.destination !== "" ||
+    advancedFilters.approver !== "" ||
+    advancedFilters.dateFrom !== "" ||
+    advancedFilters.dateTo !== "";
 
   return (
     <div className="animate-in fade-in duration-300">
@@ -78,6 +94,9 @@ export function ApproverDashboard() {
           value={1}
         />
       </div>
+
+      {/* Active filter pills */}
+      {hasAdvancedFilters && <FilterPills />}
 
       {/* Pending Requests */}
       <div className="mb-6">

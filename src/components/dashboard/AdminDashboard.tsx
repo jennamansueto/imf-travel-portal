@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   BarChart3,
@@ -15,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatCard } from "@/components/shared/StatCard";
 import { RequestTable } from "@/components/shared/RequestTable";
+import { FilterPills } from "@/components/filters/FilterPills";
+import { useFilteredRequests } from "@/hooks/useFilteredRequests";
 import type { ColumnKey } from "@/components/shared/RequestTable";
 import type { TravelRequestStatus } from "@/types";
 import { STATUS_LABELS } from "@/types";
@@ -43,25 +45,39 @@ const tableColumns: { key: ColumnKey; label: string }[] = [
 ];
 
 export function AdminDashboard() {
-  const { requests } = useApp();
+  const { requests, setShowFilterButton, advancedFilters } = useApp();
   const router = useRouter();
   const [viewMode, setViewMode] = useState<"kanban" | "table">("table");
 
+  useEffect(() => {
+    setShowFilterButton(true);
+    return () => setShowFilterButton(false);
+  }, [setShowFilterButton]);
+
+  const advancedFiltered = useFilteredRequests(requests);
+
   const metrics = useMemo(() => {
-    const pending = requests.filter(
+    const pending = advancedFiltered.filter(
       (r) => r.status === "pending_approval"
     ).length;
-    const overdue = requests.filter((r) => {
+    const overdue = advancedFiltered.filter((r) => {
       if (r.status !== "pending_approval") return false;
       const submitted = new Date(r.updatedAt);
       const now = new Date();
       return (now.getTime() - submitted.getTime()) / 86400000 > 3;
     }).length;
-    const unPending = requests.filter(
+    const unPending = advancedFiltered.filter(
       (r) => r.status === "sent_to_un" || r.status === "un_processing"
     ).length;
-    return { total: requests.length, pending, overdue, unPending };
-  }, [requests]);
+    return { total: advancedFiltered.length, pending, overdue, unPending };
+  }, [advancedFiltered]);
+
+  const hasAdvancedFilters =
+    advancedFilters.statuses.length > 0 ||
+    advancedFilters.destination !== "" ||
+    advancedFilters.approver !== "" ||
+    advancedFilters.dateFrom !== "" ||
+    advancedFilters.dateTo !== "";
 
   return (
     <div className="animate-in fade-in duration-300">
@@ -128,11 +144,14 @@ export function AdminDashboard() {
         />
       </div>
 
+      {/* Active filter pills */}
+      {hasAdvancedFilters && <FilterPills />}
+
       {/* Kanban or Table view */}
       {viewMode === "kanban" ? (
         <div className="flex gap-3 overflow-x-auto pb-4">
           {kanbanColumns.map((status) => {
-            const items = requests.filter((r) => r.status === status);
+            const items = advancedFiltered.filter((r) => r.status === status);
             return (
               <div
                 key={status}
@@ -175,7 +194,7 @@ export function AdminDashboard() {
           })}
         </div>
       ) : (
-        <RequestTable requests={requests} columns={tableColumns} />
+        <RequestTable requests={advancedFiltered} columns={tableColumns} />
       )}
     </div>
   );

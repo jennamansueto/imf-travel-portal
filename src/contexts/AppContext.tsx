@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
 import type {
   UserRole,
   TravelRequest,
@@ -9,7 +9,9 @@ import type {
   WorkflowConfig,
   Comment,
   AuditEntry,
+  AdvancedFilters,
 } from "@/types";
+import { DEFAULT_FILTERS } from "@/types";
 import { travelRequests as seedRequests, initialEmails, defaultWorkflowConfig } from "@/data/seed";
 
 interface AppContextType {
@@ -40,6 +42,12 @@ interface AppContextType {
     response: "approved" | "rejected" | "returned"
   ) => void;
   createNewRequest: () => TravelRequest;
+  advancedFilters: AdvancedFilters;
+  setAdvancedFilters: (filters: AdvancedFilters) => void;
+  clearAdvancedFilters: () => void;
+  activeFilterCount: number;
+  showFilterButton: boolean;
+  setShowFilterButton: (show: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -52,8 +60,23 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     useState<WorkflowConfig>(defaultWorkflowConfig);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [emailPanelOpen, setEmailPanelOpen] = useState(false);
+  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>(DEFAULT_FILTERS);
+  const [showFilterButton, setShowFilterButton] = useState(false);
 
   const unreadEmailCount = emails.filter((e) => !e.read).length;
+
+  const clearAdvancedFilters = useCallback(() => {
+    setAdvancedFilters(DEFAULT_FILTERS);
+  }, []);
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (advancedFilters.statuses.length > 0) count += advancedFilters.statuses.length;
+    if (advancedFilters.destination) count += 1;
+    if (advancedFilters.approver) count += 1;
+    if (advancedFilters.dateFrom || advancedFilters.dateTo) count += 1;
+    return count;
+  }, [advancedFilters]);
 
   const updateRequestStatus = useCallback(
     (
@@ -306,6 +329,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         markEmailRead,
         simulateUNResponse,
         createNewRequest,
+        advancedFilters,
+        setAdvancedFilters,
+        clearAdvancedFilters,
+        activeFilterCount,
+        showFilterButton,
+        setShowFilterButton,
       }}
     >
       {children}
