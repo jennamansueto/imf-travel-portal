@@ -124,6 +124,37 @@ export interface WorkflowConfig {
   allowReworkOnRejection: boolean;
 }
 
+export type SortOption =
+  | "updated_desc"
+  | "updated_asc"
+  | "date_desc"
+  | "date_asc";
+
+export const SORT_LABELS: Record<SortOption, string> = {
+  updated_desc: "Last Updated (newest)",
+  updated_asc: "Last Updated (oldest)",
+  date_desc: "Travel Date (latest)",
+  date_asc: "Travel Date (earliest)",
+};
+
+export interface AdvancedFilters {
+  statuses: TravelRequestStatus[];
+  destination: string;
+  approver: string;
+  dateFrom: string;
+  dateTo: string;
+  sortBy: SortOption;
+}
+
+export const DEFAULT_FILTERS: AdvancedFilters = {
+  statuses: [],
+  destination: "",
+  approver: "",
+  dateFrom: "",
+  dateTo: "",
+  sortBy: "updated_desc",
+};
+
 export const STATUS_LABELS: Record<TravelRequestStatus, string> = {
   draft: "Draft",
   pending_approval: "Pending Approval",

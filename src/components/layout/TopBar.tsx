@@ -11,6 +11,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { AdvancedFiltersPanel } from "@/components/filters/AdvancedFiltersPanel";
 import type { UserRole } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +31,7 @@ export function TopBar() {
     sidebarCollapsed,
     unreadEmailCount,
     setEmailPanelOpen,
+    showFilterButton,
   } = useApp();
 
   return (
@@ -40,16 +42,17 @@ export function TopBar() {
         "right-0"
       )}
     >
-      {/* Left: Breadcrumbs / Search */}
-      <div className="flex items-center gap-4">
+      {/* Left: Search + Filters */}
+      <div className="flex items-center gap-3">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" aria-hidden="true" />
           <Input
             placeholder="Search requests..."
             className="w-64 pl-9 text-sm"
             aria-label="Search requests"
           />
         </div>
+        {showFilterButton && <AdvancedFiltersPanel />}
       </div>
 
       {/* Right: Actions */}
