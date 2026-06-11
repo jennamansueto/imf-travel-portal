@@ -43,7 +43,7 @@ export function AdvancedFilterDropdown() {
     useApp();
 
   const [draft, setDraft] = useState<AdvancedFilters>(advancedFilters);
-  const panelRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDialogElement>(null);
   const firstFocusableRef = useRef<HTMLButtonElement>(null);
 
   // Close on Escape
@@ -91,7 +91,7 @@ export function AdvancedFilterDropdown() {
     const handleClick = (e: MouseEvent) => {
       if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
         const trigger = document.getElementById("filters-trigger-btn");
-        if (trigger && trigger.contains(e.target as Node)) return;
+        if (trigger?.contains(e.target as Node)) return;
         setFiltersOpen(false);
       }
     };
@@ -104,7 +104,7 @@ export function AdvancedFilterDropdown() {
     for (const r of requests) {
       if (r.primaryDestination) set.add(r.primaryDestination);
     }
-    return Array.from(set).sort();
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [requests]);
 
   const approvers = useMemo(() => {
@@ -112,7 +112,7 @@ export function AdvancedFilterDropdown() {
     for (const r of requests) {
       if (r.approver) set.add(r.approver);
     }
-    return Array.from(set).sort();
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [requests]);
 
   const toggleStatus = useCallback((status: TravelRequestStatus) => {
@@ -148,11 +148,10 @@ export function AdvancedFilterDropdown() {
   };
 
   return (
-    <div
+    <dialog
       ref={panelRef}
-      role="dialog"
+      open
       aria-label="Advanced filters"
-      aria-modal="true"
       className="absolute left-0 top-full z-50 mt-2 w-[490px] rounded-xl border border-gray-200 bg-white shadow-lg"
       style={{ fontFamily: 'Arial, "Helvetica Neue", Helvetica, sans-serif' }}
     >
@@ -335,6 +334,6 @@ export function AdvancedFilterDropdown() {
           Apply ({activeCount})
         </button>
       </div>
-    </div>
+    </dialog>
   );
 }

@@ -59,9 +59,8 @@ export function FilterPills() {
   if (pills.length === 0) return null;
 
   return (
-    <div
+    <section
       className="mb-4 flex flex-wrap items-center gap-2"
-      role="region"
       aria-label="Active filters"
     >
       {pills.map((pill) => (
@@ -83,6 +82,6 @@ export function FilterPills() {
       <span className="text-sm text-[#707372]" aria-live="polite">
         {pills.length} {pills.length === 1 ? "filter" : "filters"} active
       </span>
-    </div>
+    </section>
   );
 }

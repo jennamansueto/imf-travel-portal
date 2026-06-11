@@ -17,7 +17,7 @@ import { hasActiveFilters } from "@/hooks/useFilteredRequests";
 import type { UserRole } from "@/types";
 import { cn } from "@/lib/utils";
 
-const LIST_PAGES = ["/dashboard", "/clearance"];
+const LIST_PAGES = new Set(["/dashboard", "/clearance"]);
 
 const roleLabels: Record<UserRole, { label: string; color: string }> = {
   requestor: { label: "Requestor", color: "bg-blue-100 text-blue-800" },
@@ -41,7 +41,7 @@ export function TopBar() {
   } = useApp();
 
   const pathname = usePathname();
-  const showFiltersButton = LIST_PAGES.includes(pathname);
+  const showFiltersButton = LIST_PAGES.has(pathname);
   const isActive = hasActiveFilters(advancedFilters);
 
   return (
