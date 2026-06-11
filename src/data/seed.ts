@@ -1,4 +1,5 @@
 import type { TravelRequest, Traveler, SimulatedEmail, WorkflowConfig, ItineraryLeg, Accommodation, CountryStay, AuditEntry, ValidationIssue, Comment } from "@/types";
+import { SEED_IP_ADDRESSES } from "@/config/networkAddresses";
 
 // Factory helpers to reduce structural repetition
 function leg(id: string, legNumber: number, from: [string, string], to: [string, string], dep: [string, string], arr: [string, string], transport: "flight" | "train" | "car", carrier: string, flight: string, toAirport: string, fromAirport: string): ItineraryLeg {
@@ -31,15 +32,15 @@ const PARIS: [string, string] = ["Paris", "France"];
 const IMF_SHUTTLE = "IMF shuttle service";
 const HOTEL_TRANSFER = "Hotel transfer arranged";
 
-// IPs for actors
-const IP_VASQUEZ = "10.0.42.118";
-const IP_ASANTE = "10.0.42.205";
-const IP_LAURENT = "10.0.55.42";
-const IP_PATEL = "10.0.42.301";
-const IP_CHEN = "10.0.42.88";
-const IP_WILLIAMS = "10.0.42.150";
-const IP_SYSTEM = "10.0.0.1";
-const IP_UNDSS = "192.168.1.1";
+// IPs for actors — sourced from centralised config
+const IP_VASQUEZ = SEED_IP_ADDRESSES.vasquez;
+const IP_ASANTE = SEED_IP_ADDRESSES.asante;
+const IP_LAURENT = SEED_IP_ADDRESSES.laurent;
+const IP_PATEL = SEED_IP_ADDRESSES.patel;
+const IP_CHEN = SEED_IP_ADDRESSES.chen;
+const IP_WILLIAMS = SEED_IP_ADDRESSES.williams;
+const IP_SYSTEM = SEED_IP_ADDRESSES.system;
+const IP_UNDSS = SEED_IP_ADDRESSES.undss;
 
 export const travelers: Traveler[] = [
   { id: "t1", employeeId: "IMF-40231", name: "Elena Vasquez", email: "evasquez@imf.org", phone: "+1 (202) 555-0142", department: "Fiscal Affairs", division: "Tax Policy", dutyStation: "Washington, D.C." },
