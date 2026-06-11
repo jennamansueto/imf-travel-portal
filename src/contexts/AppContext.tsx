@@ -12,6 +12,9 @@ import type {
 } from "@/types";
 import { travelRequests as seedRequests, initialEmails, defaultWorkflowConfig } from "@/data/seed";
 
+const DEFAULT_CLIENT_IP = process.env.NEXT_PUBLIC_DEFAULT_CLIENT_IP ?? "10.0.42.118";
+const UNDSS_IP = process.env.NEXT_PUBLIC_UNDSS_IP ?? "192.168.1.1";
+
 interface AppContextType {
   role: UserRole;
   setRole: (role: UserRole) => void;
@@ -105,7 +108,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
                 actorRole: role,
                 action: actionMap[newStatus],
                 details: comment || `Status changed to ${newStatus}`,
-                ipAddress: "10.0.42.118",
+                ipAddress: DEFAULT_CLIENT_IP,
               },
             ],
           };
@@ -206,7 +209,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
                       ? "UN Rejected"
                       : "Returned by UN",
                 details: commentMap[response],
-                ipAddress: "192.168.1.1",
+                ipAddress: UNDSS_IP,
               },
             ],
             comments: [
@@ -275,7 +278,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           actorRole: "requestor",
           action: "Created",
           details: "Travel request created as draft",
-          ipAddress: "10.0.42.118",
+          ipAddress: DEFAULT_CLIENT_IP,
         },
       ],
       validationIssues: [],
