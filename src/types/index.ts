@@ -136,6 +136,41 @@ export const STATUS_LABELS: Record<TravelRequestStatus, string> = {
   returned_by_un: "Returned for Corrections",
 };
 
+export type SortOption =
+  | "updated_newest"
+  | "updated_oldest"
+  | "travel_soonest"
+  | "travel_latest"
+  | "req_asc"
+  | "req_desc";
+
+export const SORT_LABELS: Record<SortOption, string> = {
+  updated_newest: "Last Updated (newest)",
+  updated_oldest: "Last Updated (oldest)",
+  travel_soonest: "Travel Date (soonest)",
+  travel_latest: "Travel Date (latest)",
+  req_asc: "Requisition # (ascending)",
+  req_desc: "Requisition # (descending)",
+};
+
+export interface AdvancedFilters {
+  statuses: TravelRequestStatus[];
+  destination: string;
+  dateFrom: string;
+  dateTo: string;
+  approver: string;
+  sortBy: SortOption;
+}
+
+export const EMPTY_FILTERS: AdvancedFilters = {
+  statuses: [],
+  destination: "",
+  dateFrom: "",
+  dateTo: "",
+  approver: "",
+  sortBy: "updated_newest",
+};
+
 export const STATUS_COLORS: Record<TravelRequestStatus, { bg: string; text: string; border: string }> = {
   draft: { bg: "bg-slate-100", text: "text-slate-700", border: "border-slate-300" },
   pending_approval: { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-300" },
