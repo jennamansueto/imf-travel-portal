@@ -43,7 +43,7 @@ export function AdvancedFiltersPanel() {
     for (const r of requests) {
       if (r.primaryDestination) dests.add(r.primaryDestination);
     }
-    return Array.from(dests).sort();
+    return Array.from(dests).sort((a, b) => a.localeCompare(b));
   }, [requests]);
 
   const approvers = useMemo(() => {
@@ -51,7 +51,7 @@ export function AdvancedFiltersPanel() {
     for (const r of requests) {
       if (r.approver) apps.add(r.approver);
     }
-    return Array.from(apps).sort();
+    return Array.from(apps).sort((a, b) => a.localeCompare(b));
   }, [requests]);
 
   const draftFilterCount = useMemo(() => {
@@ -256,10 +256,7 @@ export function AdvancedFiltersPanel() {
                   onChange={(e) =>
                     setDraft((prev) => ({ ...prev, approver: e.target.value }))
                   }
-                  className={cn(
-                    "h-9 w-full appearance-none rounded-lg border border-gray-300 bg-white py-2 pl-3 text-sm text-gray-700 focus:border-[#004C97] focus:outline-none focus:ring-2 focus:ring-[#004C97]/30",
-                    draft.approver ? "pr-8" : "pr-8"
-                  )}
+                  className="h-9 w-full appearance-none rounded-lg border border-gray-300 bg-white py-2 pr-8 pl-3 text-sm text-gray-700 focus:border-[#004C97] focus:outline-none focus:ring-2 focus:ring-[#004C97]/30"
                 >
                   <option value="">Select approver...</option>
                   {approvers.map((a) => (
