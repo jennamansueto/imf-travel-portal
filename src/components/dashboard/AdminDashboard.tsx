@@ -15,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatCard } from "@/components/shared/StatCard";
 import { RequestTable } from "@/components/shared/RequestTable";
+import { FilterPills } from "@/components/shared/FilterPills";
+import { useFilteredRequests, hasActiveFilters } from "@/hooks/useFilteredRequests";
 import type { ColumnKey } from "@/components/shared/RequestTable";
 import type { TravelRequestStatus } from "@/types";
 import { STATUS_LABELS } from "@/types";
@@ -43,25 +45,29 @@ const tableColumns: { key: ColumnKey; label: string }[] = [
 ];
 
 export function AdminDashboard() {
-  const { requests } = useApp();
+  const { requests, advancedFilters } = useApp();
   const router = useRouter();
   const [viewMode, setViewMode] = useState<"kanban" | "table">("table");
 
+  const filteredByAdvanced = useFilteredRequests(requests, advancedFilters);
+  const filtersActive = hasActiveFilters(advancedFilters);
+  const source = filtersActive ? filteredByAdvanced : requests;
+
   const metrics = useMemo(() => {
-    const pending = requests.filter(
+    const pending = source.filter(
       (r) => r.status === "pending_approval"
     ).length;
-    const overdue = requests.filter((r) => {
+    const overdue = source.filter((r) => {
       if (r.status !== "pending_approval") return false;
       const submitted = new Date(r.updatedAt);
       const now = new Date();
       return (now.getTime() - submitted.getTime()) / 86400000 > 3;
     }).length;
-    const unPending = requests.filter(
+    const unPending = source.filter(
       (r) => r.status === "sent_to_un" || r.status === "un_processing"
     ).length;
-    return { total: requests.length, pending, overdue, unPending };
-  }, [requests]);
+    return { total: source.length, pending, overdue, unPending };
+  }, [source]);
 
   return (
     <div className="animate-in fade-in duration-300">
@@ -95,6 +101,9 @@ export function AdminDashboard() {
           </Button>
         </div>
       </div>
+
+      {/* Active filter pills */}
+      <FilterPills />
 
       {/* Metrics row */}
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-4">
@@ -132,7 +141,7 @@ export function AdminDashboard() {
       {viewMode === "kanban" ? (
         <div className="flex gap-3 overflow-x-auto pb-4">
           {kanbanColumns.map((status) => {
-            const items = requests.filter((r) => r.status === status);
+            const items = source.filter((r) => r.status === status);
             return (
               <div
                 key={status}
@@ -175,7 +184,7 @@ export function AdminDashboard() {
           })}
         </div>
       ) : (
-        <RequestTable requests={requests} columns={tableColumns} />
+        <RequestTable requests={source} columns={tableColumns} />
       )}
     </div>
   );

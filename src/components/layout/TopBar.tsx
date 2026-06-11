@@ -1,6 +1,7 @@
 "use client";
 
-import { Bell, Search, ChevronDown, Mail } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Bell, Search, ChevronDown, Mail, SlidersHorizontal } from "lucide-react";
 import { useApp } from "@/contexts/AppContext";
 import {
   DropdownMenu,
@@ -11,8 +12,12 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { AdvancedFilterDropdown } from "@/components/shared/AdvancedFilterDropdown";
+import { hasActiveFilters } from "@/hooks/useFilteredRequests";
 import type { UserRole } from "@/types";
 import { cn } from "@/lib/utils";
+
+const LIST_PAGES = new Set(["/dashboard", "/clearance"]);
 
 const roleLabels: Record<UserRole, { label: string; color: string }> = {
   requestor: { label: "Requestor", color: "bg-blue-100 text-blue-800" },
@@ -30,7 +35,14 @@ export function TopBar() {
     sidebarCollapsed,
     unreadEmailCount,
     setEmailPanelOpen,
+    advancedFilters,
+    filtersOpen,
+    setFiltersOpen,
   } = useApp();
+
+  const pathname = usePathname();
+  const showFiltersButton = LIST_PAGES.has(pathname);
+  const isActive = hasActiveFilters(advancedFilters);
 
   return (
     <header
@@ -40,8 +52,8 @@ export function TopBar() {
         "right-0"
       )}
     >
-      {/* Left: Breadcrumbs / Search */}
-      <div className="flex items-center gap-4">
+      {/* Left: Search + Filters */}
+      <div className="flex items-center gap-3">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
@@ -50,6 +62,28 @@ export function TopBar() {
             aria-label="Search requests"
           />
         </div>
+
+        {showFiltersButton && (
+          <div className="relative">
+            <button
+              id="filters-trigger-btn"
+              type="button"
+              onClick={() => setFiltersOpen(!filtersOpen)}
+              aria-expanded={filtersOpen}
+              aria-haspopup="dialog"
+              className={cn(
+                "inline-flex h-9 items-center gap-2 rounded-lg border px-3.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#004C97] focus:ring-offset-2",
+                isActive
+                  ? "border-[#004C97] bg-[#EEF2FF] text-[#004C97]"
+                  : "border-gray-300 bg-white text-gray-600 hover:bg-gray-50"
+              )}
+            >
+              <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
+              Filters
+            </button>
+            {filtersOpen && <AdvancedFilterDropdown />}
+          </div>
+        )}
       </div>
 
       {/* Right: Actions */}

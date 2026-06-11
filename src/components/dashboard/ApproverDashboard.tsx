@@ -7,6 +7,8 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StatCard } from "@/components/shared/StatCard";
 import { RequestTable } from "@/components/shared/RequestTable";
+import { FilterPills } from "@/components/shared/FilterPills";
+import { useFilteredRequests, hasActiveFilters } from "@/hooks/useFilteredRequests";
 import type { ColumnKey } from "@/components/shared/RequestTable";
 
 const pendingColumns: { key: ColumnKey; label: string }[] = [
@@ -27,22 +29,26 @@ const decisionsColumns: { key: ColumnKey; label: string }[] = [
 ];
 
 export function ApproverDashboard() {
-  const { requests } = useApp();
+  const { requests, advancedFilters } = useApp();
+
+  const filteredByAdvanced = useFilteredRequests(requests, advancedFilters);
+  const filtersActive = hasActiveFilters(advancedFilters);
+  const source = filtersActive ? filteredByAdvanced : requests;
 
   const pendingRequests = useMemo(
-    () => requests.filter((r) => r.status === "pending_approval"),
-    [requests]
+    () => source.filter((r) => r.status === "pending_approval"),
+    [source]
   );
 
   const recentDecisions = useMemo(
     () =>
-      requests.filter(
+      source.filter(
         (r) =>
           r.status === "approved" ||
           r.status === "returned_by_approver" ||
           r.status === "sent_to_un"
       ),
-    [requests]
+    [source]
   );
 
   return (
@@ -78,6 +84,9 @@ export function ApproverDashboard() {
           value={1}
         />
       </div>
+
+      {/* Active filter pills */}
+      <FilterPills />
 
       {/* Pending Requests */}
       <div className="mb-6">

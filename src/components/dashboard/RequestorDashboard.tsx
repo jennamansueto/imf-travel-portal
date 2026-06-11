@@ -8,6 +8,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RequestTable } from "@/components/shared/RequestTable";
+import { FilterPills } from "@/components/shared/FilterPills";
+import { useFilteredRequests, hasActiveFilters } from "@/hooks/useFilteredRequests";
 import type { ColumnKey } from "@/components/shared/RequestTable";
 import type { TravelRequestStatus } from "@/types";
 import { STATUS_LABELS } from "@/types";
@@ -34,7 +36,7 @@ const tableColumns: { key: ColumnKey; label: string }[] = [
 ];
 
 export function RequestorDashboard() {
-  const { requests, createNewRequest } = useApp();
+  const { requests, createNewRequest, advancedFilters } = useApp();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<TravelRequestStatus | "all">(
@@ -42,16 +44,21 @@ export function RequestorDashboard() {
   );
   const [loading] = useState(false);
 
+  const advancedFilteredRequests = useFilteredRequests(requests, advancedFilters);
+  const filtersActive = hasActiveFilters(advancedFilters);
+
   const statusCounts = useMemo(() => {
     const counts: Record<string, number> = {};
+    const source = filtersActive ? advancedFilteredRequests : requests;
     for (const s of statusGroups) {
-      counts[s.key] = requests.filter((r) => r.status === s.key).length;
+      counts[s.key] = source.filter((r) => r.status === s.key).length;
     }
     return counts;
-  }, [requests]);
+  }, [requests, advancedFilteredRequests, filtersActive]);
 
   const filteredRequests = useMemo(() => {
-    return requests.filter((r) => {
+    const source = filtersActive ? advancedFilteredRequests : requests;
+    return source.filter((r) => {
       if (statusFilter !== "all" && r.status !== statusFilter) return false;
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
@@ -63,7 +70,7 @@ export function RequestorDashboard() {
       }
       return true;
     });
-  }, [requests, statusFilter, searchQuery]);
+  }, [requests, advancedFilteredRequests, filtersActive, statusFilter, searchQuery]);
 
   const handleNewRequest = () => {
     const newReq = createNewRequest();
@@ -125,6 +132,9 @@ export function RequestorDashboard() {
           </button>
         ))}
       </div>
+
+      {/* Active filter pills */}
+      <FilterPills />
 
       {/* Filter bar */}
       <Card className="mb-4">
