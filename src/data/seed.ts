@@ -32,14 +32,14 @@ const IMF_SHUTTLE = "IMF shuttle service";
 const HOTEL_TRANSFER = "Hotel transfer arranged";
 
 // IPs for actors
-const IP_VASQUEZ = "10.0.42.118";
-const IP_ASANTE = "10.0.42.205";
-const IP_LAURENT = "10.0.55.42";
-const IP_PATEL = "10.0.42.301";
-const IP_CHEN = "10.0.42.88";
-const IP_WILLIAMS = "10.0.42.150";
-const IP_SYSTEM = "10.0.0.1";
-const IP_UNDSS = "192.168.1.1";
+const IP_VASQUEZ = "198.51.100.118";
+const IP_ASANTE = "198.51.100.205";
+const IP_LAURENT = "198.51.100.42";
+const IP_PATEL = "198.51.100.45";
+const IP_CHEN = "198.51.100.88";
+const IP_WILLIAMS = "198.51.100.150";
+const IP_SYSTEM = "198.51.100.1";
+const IP_UNDSS = "203.0.113.1";
 
 export const travelers: Traveler[] = [
   { id: "t1", employeeId: "IMF-40231", name: "Elena Vasquez", email: "evasquez@imf.org", phone: "+1 (202) 555-0142", department: "Fiscal Affairs", division: "Tax Policy", dutyStation: "Washington, D.C." },
