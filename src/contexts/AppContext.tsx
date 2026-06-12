@@ -105,7 +105,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
                 actorRole: role,
                 action: actionMap[newStatus],
                 details: comment || `Status changed to ${newStatus}`,
-                ipAddress: "10.0.42.118",
+                ipAddress: "198.51.100.118",
               },
             ],
           };
@@ -206,7 +206,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
                       ? "UN Rejected"
                       : "Returned by UN",
                 details: commentMap[response],
-                ipAddress: "192.168.1.1",
+                ipAddress: "203.0.113.1",
               },
             ],
             comments: [
@@ -275,7 +275,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           actorRole: "requestor",
           action: "Created",
           details: "Travel request created as draft",
-          ipAddress: "10.0.42.118",
+          ipAddress: "198.51.100.118",
         },
       ],
       validationIssues: [],
